@@ -1,7 +1,38 @@
 import { Uri } from "vscode";
 import { SolutionEffortLevel } from "../effort";
 
-export type WebviewType = "sidebar" | "resolution" | "profiles";
+export type WebviewType = "sidebar" | "resolution" | "profiles" | "wizard";
+
+export enum WizardStep {
+  Setup = "setup",
+  Profile = "profile",
+  Analysis = "analysis",
+  Resolution = "resolution",
+}
+
+export interface WizardState {
+  currentStep: WizardStep;
+  completedSteps: WizardStep[];
+  canNavigateBack: boolean;
+  canNavigateForward: boolean;
+  stepData: {
+    setup: {
+      providerConfigured: boolean;
+    };
+    profile: {
+      selectedProfileId?: string;
+      profilesLoaded: boolean;
+    };
+    analysis: {
+      analysisCompleted: boolean;
+      hasIncidents: boolean;
+    };
+    resolution: {
+      selectedIncidents: EnhancedIncident[];
+      solutionApplied: boolean;
+    };
+  };
+}
 
 export interface Incident {
   uri: string;
@@ -157,6 +188,7 @@ export interface ExtensionData {
   analysisConfig: AnalysisConfig;
   profiles: AnalysisProfile[];
   activeProfileId: string | null;
+  wizardState: WizardState;
 }
 export type AnalysisConfig = {
   labelSelectorValid: boolean;

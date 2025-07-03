@@ -164,7 +164,7 @@ export class AnalyzerClient {
     this.analyzerRpcConnection.onClose(() =>
       this.outputChannel.appendLine("RPC connection closed"),
     );
-    this.analyzerRpcConnection.onRequest((method, params) => {
+    this.analyzerRpcConnection.onRequest((_method, _params) => {
       // this.outputChannel.appendLine(`Received request: ${method} + ${JSON.stringify(params)}`);
     });
 
@@ -231,6 +231,16 @@ export class AnalyzerClient {
     this.outputChannel.appendLine(`server cwd: ${paths().serverCwd.fsPath}`);
     this.outputChannel.appendLine(`analysis server path: ${analyzerPath}`);
 
+    // Required Java analysis dependencies for the analyzer to initialize Java provider
+    const bundleJars = this.assetPaths.jdtlsBundleJars.join(",");
+    const lspServerPath = this.assetPaths.jdtlsBin;
+    const depOpenSourceLabelsFile = this.assetPaths.openSourceLabelsFile;
+
+    // Debug: Log the paths to ensure they exist
+    this.outputChannel.appendLine(`bundleJars: ${bundleJars}`);
+    this.outputChannel.appendLine(`lspServerPath: ${lspServerPath}`);
+    this.outputChannel.appendLine(`depOpenSourceLabelsFile: ${depOpenSourceLabelsFile}`);
+
     this.outputChannel.appendLine(`server args:`);
     const analyzerRpcServer = spawn(
       analyzerPath,
@@ -243,6 +253,12 @@ export class AnalyzerClient {
         location,
         "-log-file",
         logs,
+        "-bundles",
+        bundleJars,
+        "-lspServerPath",
+        lspServerPath,
+        "-depOpenSourceLabelsFile",
+        depOpenSourceLabelsFile,
       ],
       {
         cwd: paths().serverCwd.fsPath,

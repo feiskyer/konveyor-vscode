@@ -25,6 +25,12 @@ export interface ExtensionPaths {
 
   /** Directory for jsonrpc server logs. */
   serverLogs: vscode.Uri;
+
+  /** Project-specific .konveyor directory for configuration. */
+  projectConfig: vscode.Uri;
+
+  /** Direct path to the project's profiles.json file. */
+  projectProfiles: vscode.Uri;
 }
 
 export type ExtensionFsPaths = Record<keyof ExtensionPaths, string>;
@@ -60,6 +66,9 @@ export async function ensurePaths(context: vscode.ExtensionContext): Promise<Ext
   const extResources = vscode.Uri.joinPath(context.extensionUri, "resources");
   const settingsYaml = vscode.Uri.joinPath(globalScope, "settings", "provider-settings.yaml");
 
+  const projectConfig = await ensureDirectory(firstWorkspace.uri, ".konveyor");
+  const projectProfiles = vscode.Uri.joinPath(projectConfig, "profiles.json");
+
   _paths = {
     extResources,
     workspaceRepo: firstWorkspace.uri,
@@ -68,6 +77,8 @@ export async function ensurePaths(context: vscode.ExtensionContext): Promise<Ext
     settingsYaml,
     serverCwd: await ensureDirectory(workspaceScope, "kai-rpc-server"),
     serverLogs: await ensureDirectory(workspaceRepoScope, "konveyor-logs"),
+    projectConfig,
+    projectProfiles,
   };
 
   _fsPaths = {} as ExtensionFsPaths;

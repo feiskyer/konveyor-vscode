@@ -29,10 +29,8 @@ export async function handleConfigureCustomRules(profileId: string, state: Exten
     customRules: Array.from(new Set([...(profile.customRules ?? []), ...customRules])),
   };
 
-  const userProfiles = getUserProfiles(state.extensionContext).map((p) =>
-    p.id === updated.id ? updated : p,
-  );
-  await saveUserProfiles(state.extensionContext, userProfiles);
+  const userProfiles = (await getUserProfiles()).map((p) => (p.id === updated.id ? updated : p));
+  await saveUserProfiles(userProfiles);
 
   state.mutateData((draft) => {
     const target = draft.profiles.find((p) => p.id === updated.id);

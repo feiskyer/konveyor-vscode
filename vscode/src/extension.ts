@@ -22,8 +22,12 @@ import {
   updateAnalysisConfig,
 } from "./utilities";
 import { getBundledProfiles } from "./utilities/profiles/bundledProfiles";
-import { getUserProfiles } from "./utilities/profiles/profileService";
+import {
+  getUserProfiles,
+  migrateGlobalProfilesToProject,
+} from "./utilities/profiles/profileService";
 import { DiagnosticTaskManager } from "./taskManager/taskManager";
+import { WizardStep } from "@editor-extensions/shared";
 
 class VsCodeExtension {
   private state: ExtensionState;
@@ -63,6 +67,29 @@ class VsCodeExtension {
         },
         activeProfileId: "",
         profiles: [],
+        wizardState: {
+          currentStep: WizardStep.Setup,
+          completedSteps: [],
+          canNavigateBack: false,
+          canNavigateForward: false,
+          stepData: {
+            setup: {
+              providerConfigured: false,
+            },
+            profile: {
+              selectedProfileId: undefined,
+              profilesLoaded: false,
+            },
+            analysis: {
+              analysisCompleted: false,
+              hasIncidents: false,
+            },
+            resolution: {
+              selectedIncidents: [],
+              solutionApplied: false,
+            },
+          },
+        },
       },
       () => {},
     );
@@ -104,8 +131,11 @@ class VsCodeExtension {
     try {
       this.checkWorkspace();
 
+      // Run profile migration first
+      await migrateGlobalProfilesToProject(this.context);
+
       const bundled = getBundledProfiles();
-      const user = getUserProfiles(this.context);
+      const user = await getUserProfiles();
       const allProfiles = [...bundled, ...user];
 
       const storedActiveId = this.context.workspaceState.get<string>("activeProfileId");
@@ -180,10 +210,43 @@ class VsCodeExtension {
         }),
       );
 
+      // Load profiles and update wizard state
+      await this.loadProfilesAndInitializeWizard();
+
       vscode.commands.executeCommand("konveyor.loadResultsFromDataFolder");
     } catch (error) {
       console.error("Error initializing extension:", error);
       vscode.window.showErrorMessage(`Failed to initialize Konveyor extension: ${error}`);
+    }
+  }
+
+  private async loadProfilesAndInitializeWizard(): Promise<void> {
+    try {
+      // Ensure provider settings file exists
+      await copySampleProviderSettings(false);
+
+      // Load all profiles (bundled + user)
+      const userProfiles = await getUserProfiles();
+      const allProfiles = [...getBundledProfiles(), ...userProfiles];
+
+      // Get active profile ID
+      const activeProfileId =
+        this.context.workspaceState.get<string>("activeProfileId") || allProfiles[0]?.id || "";
+
+      // Update extension state with profiles and wizard state
+      this.state.mutateData((draft) => {
+        draft.profiles = allProfiles;
+        draft.activeProfileId = activeProfileId;
+
+        // Update wizard state to reflect profiles are loaded
+        draft.wizardState.stepData.profile.profilesLoaded = true;
+        draft.wizardState.stepData.profile.selectedProfileId = activeProfileId;
+
+        // Update analysis config
+        updateAnalysisConfig(draft, this.paths.settingsYaml.toString(true));
+      });
+    } catch (error) {
+      console.error("Error loading profiles:", error);
     }
   }
 
@@ -196,7 +259,7 @@ class VsCodeExtension {
   }
 
   private registerWebviewProvider(): void {
-    const sidebarProvider = new KonveyorGUIWebviewViewProvider(this.state, "sidebar");
+    const sidebarProvider = new KonveyorGUIWebviewViewProvider(this.state, "wizard");
     const resolutionViewProvider = new KonveyorGUIWebviewViewProvider(this.state, "resolution");
     const profilesViewProvider = new KonveyorGUIWebviewViewProvider(this.state, "profiles");
 

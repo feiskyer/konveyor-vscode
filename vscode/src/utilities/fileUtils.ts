@@ -4,6 +4,7 @@ import { access } from "node:fs/promises";
 import { platform } from "node:process";
 import * as vscode from "vscode";
 import { paths } from "../paths";
+import { AnalysisProfile } from "../../../shared/src/types";
 
 const isWindows = platform === "win32";
 
@@ -79,5 +80,67 @@ export const copySampleProviderSettings = async (force: boolean = false) => {
       paths().settingsYaml,
       { overwrite: true },
     );
+  }
+};
+
+/**
+ * Check if the project profiles.json file exists.
+ */
+export const projectProfilesExists = async (): Promise<boolean> => {
+  try {
+    await vscode.workspace.fs.stat(paths().projectProfiles);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * Read analysis profiles from the project's profiles.json file.
+ */
+export const readProjectProfiles = async (): Promise<AnalysisProfile[]> => {
+  try {
+    const profileData = await vscode.workspace.fs.readFile(paths().projectProfiles);
+    const profileText = Buffer.from(profileData).toString("utf8");
+    const profiles = JSON.parse(profileText) as AnalysisProfile[];
+    return profiles;
+  } catch (error) {
+    console.log("Could not read project profiles, returning empty array:", error);
+    return [];
+  }
+};
+
+/**
+ * Write analysis profiles to the project's profiles.json file.
+ */
+export const writeProjectProfiles = async (profiles: AnalysisProfile[]): Promise<void> => {
+  try {
+    const profileData = JSON.stringify(profiles, null, 2);
+    const profileBuffer = Buffer.from(profileData, "utf8");
+    await vscode.workspace.fs.writeFile(paths().projectProfiles, profileBuffer);
+  } catch (error) {
+    console.error("Failed to write project profiles:", error);
+    throw error;
+  }
+};
+
+/**
+ * Ensure the .konveyor directory exists and create it if it doesn't.
+ */
+export const ensureProjectConfigDirectory = async (): Promise<void> => {
+  try {
+    await vscode.workspace.fs.stat(paths().projectConfig);
+  } catch {
+    await vscode.workspace.fs.createDirectory(paths().projectConfig);
+  }
+};
+
+/**
+ * Initialize an empty profiles.json file if it doesn't exist.
+ */
+export const initializeProjectProfiles = async (): Promise<void> => {
+  const exists = await projectProfilesExists();
+  if (!exists) {
+    await writeProjectProfiles([]);
   }
 };

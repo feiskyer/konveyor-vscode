@@ -25,6 +25,10 @@ import {
   UPDATE_PROFILE,
   VIEW_FIX,
   WEBVIEW_READY,
+  WIZARD_NEXT_STEP,
+  WIZARD_PREVIOUS_STEP,
+  WIZARD_SET_STEP,
+  WizardStep,
   WebviewAction,
   WebviewActionType,
   ScopeWithKonveyorContext,
@@ -48,7 +52,7 @@ const actions: {
   [name: string]: (payload: any, state: ExtensionState) => void | Promise<void>;
 } = {
   [ADD_PROFILE]: async (profile: AnalysisProfile, state) => {
-    const userProfiles = getUserProfiles(state.extensionContext);
+    const userProfiles = await getUserProfiles();
 
     if (userProfiles.some((p) => p.name === profile.name)) {
       vscode.window.showErrorMessage(`A profile named "${profile.name}" already exists.`);
@@ -56,7 +60,7 @@ const actions: {
     }
 
     const updated = [...userProfiles, profile];
-    saveUserProfiles(state.extensionContext, updated);
+    await saveUserProfiles(updated);
 
     const allProfiles = [...getBundledProfiles(), ...updated];
     setActiveProfileId(profile.id, state);
@@ -69,10 +73,10 @@ const actions: {
   },
 
   [DELETE_PROFILE]: async (profileId: string, state) => {
-    const userProfiles = getUserProfiles(state.extensionContext);
+    const userProfiles = await getUserProfiles();
     const filtered = userProfiles.filter((p) => p.id !== profileId);
 
-    saveUserProfiles(state.extensionContext, filtered);
+    await saveUserProfiles(filtered);
 
     const fullProfiles = [...getBundledProfiles(), ...filtered];
     state.mutateData((draft) => {
@@ -87,7 +91,7 @@ const actions: {
   },
 
   [UPDATE_PROFILE]: async ({ originalId, updatedProfile }, state) => {
-    const allProfiles = [...getBundledProfiles(), ...getUserProfiles(state.extensionContext)];
+    const allProfiles = [...getBundledProfiles(), ...(await getUserProfiles())];
     const isBundled = allProfiles.find((p) => p.id === originalId)?.readOnly;
 
     if (isBundled) {
@@ -102,7 +106,7 @@ const actions: {
     );
 
     const userProfiles = updatedList.filter((p) => !p.readOnly);
-    saveUserProfiles(state.extensionContext, userProfiles);
+    await saveUserProfiles(userProfiles);
 
     const fullProfiles = [...getBundledProfiles(), ...userProfiles];
     state.mutateData((draft) => {
@@ -116,13 +120,13 @@ const actions: {
   },
 
   [SET_ACTIVE_PROFILE]: async (profileId: string, state) => {
-    const allProfiles = [...getBundledProfiles(), ...getUserProfiles(state.extensionContext)];
+    const allProfiles = [...getBundledProfiles(), ...(await getUserProfiles())];
     const valid = allProfiles.find((p) => p.id === profileId);
     if (!valid) {
       vscode.window.showErrorMessage(`Cannot set active profile. Profile not found.`);
       return;
     }
-    setActiveProfileId(profileId, state);
+    await setActiveProfileId(profileId, state);
     state.mutateData((draft) => {
       draft.activeProfileId = profileId;
       updateAnalysisConfigFromActiveProfile(draft);
@@ -200,6 +204,62 @@ const actions: {
   },
   [STOP_SERVER]() {
     vscode.commands.executeCommand("konveyor.stopServer");
+  },
+
+  [WIZARD_NEXT_STEP]: (_, state) => {
+    state.mutateData((draft) => {
+      const currentStepIndex = [
+        WizardStep.Setup,
+        WizardStep.Profile,
+        WizardStep.Analysis,
+        WizardStep.Resolution,
+      ].indexOf(draft.wizardState.currentStep);
+
+      if (currentStepIndex < 3) {
+        const nextStep = [
+          WizardStep.Setup,
+          WizardStep.Profile,
+          WizardStep.Analysis,
+          WizardStep.Resolution,
+        ][currentStepIndex + 1];
+
+        draft.wizardState.currentStep = nextStep;
+        if (!draft.wizardState.completedSteps.includes(draft.wizardState.currentStep)) {
+          draft.wizardState.completedSteps.push(draft.wizardState.currentStep);
+        }
+      }
+    });
+  },
+
+  [WIZARD_PREVIOUS_STEP]: (_, state) => {
+    state.mutateData((draft) => {
+      const currentStepIndex = [
+        WizardStep.Setup,
+        WizardStep.Profile,
+        WizardStep.Analysis,
+        WizardStep.Resolution,
+      ].indexOf(draft.wizardState.currentStep);
+
+      if (currentStepIndex > 0) {
+        const previousStep = [
+          WizardStep.Setup,
+          WizardStep.Profile,
+          WizardStep.Analysis,
+          WizardStep.Resolution,
+        ][currentStepIndex - 1];
+
+        draft.wizardState.currentStep = previousStep;
+      }
+    });
+  },
+
+  [WIZARD_SET_STEP]: (step: WizardStep, state) => {
+    state.mutateData((draft) => {
+      draft.wizardState.currentStep = step;
+      if (!draft.wizardState.completedSteps.includes(step)) {
+        draft.wizardState.completedSteps.push(step);
+      }
+    });
   },
 };
 

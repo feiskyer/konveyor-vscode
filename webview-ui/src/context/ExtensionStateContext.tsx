@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, PropsWithChildren } from "react";
-import { ExtensionData, WebviewAction, WebviewActionType } from "@editor-extensions/shared";
+import { ExtensionData, WebviewAction, WebviewActionType, WizardStep } from "@editor-extensions/shared";
 import { sendVscodeMessage as dispatch } from "../utils/vscodeMessaging";
 
 const defaultState: ExtensionData = {
@@ -28,6 +28,29 @@ const defaultState: ExtensionData = {
   },
   profiles: [],
   activeProfileId: "",
+  wizardState: {
+    currentStep: WizardStep.Setup,
+    completedSteps: [],
+    canNavigateBack: false,
+    canNavigateForward: false,
+    stepData: {
+      setup: {
+        providerConfigured: false,
+      },
+      profile: {
+        selectedProfileId: undefined,
+        profilesLoaded: false,
+      },
+      analysis: {
+        analysisCompleted: false,
+        hasIncidents: false,
+      },
+      resolution: {
+        selectedIncidents: [],
+        solutionApplied: false,
+      },
+    },
+  },
 };
 
 const windowState =

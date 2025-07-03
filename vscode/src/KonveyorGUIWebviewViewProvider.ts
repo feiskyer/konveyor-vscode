@@ -39,7 +39,7 @@ export class KonveyorGUIWebviewViewProvider implements WebviewViewProvider {
   ) {}
 
   isAnalysisView() {
-    return this._viewType === "sidebar";
+    return this._viewType === "sidebar" || this._viewType === "wizard";
   }
 
   public resolveWebviewView(
@@ -61,6 +61,11 @@ export class KonveyorGUIWebviewViewProvider implements WebviewViewProvider {
           return {
             viewType: KonveyorGUIWebviewViewProvider.SIDEBAR_VIEW_TYPE,
             title: "Konveyor Analysis View",
+          };
+        case "wizard":
+          return {
+            viewType: KonveyorGUIWebviewViewProvider.SIDEBAR_VIEW_TYPE,
+            title: "Konveyor Migration Wizard",
           };
         case "resolution":
           return {

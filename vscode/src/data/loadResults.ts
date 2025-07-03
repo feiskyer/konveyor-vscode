@@ -25,6 +25,10 @@ export const loadRuleSets = async (state: ExtensionState, receivedRuleSets: Rule
   state.mutateData((draft) => {
     draft.ruleSets = receivedRuleSets;
     draft.enhancedIncidents = enhancedIncidents;
+
+    // Update wizard state to reflect analysis completion
+    draft.wizardState.stepData.analysis.analysisCompleted = true;
+    draft.wizardState.stepData.analysis.hasIncidents = enhancedIncidents.length > 0;
   });
   const diagnosticTuples = processIncidents(enhancedIncidents);
   state.diagnosticCollection.clear();

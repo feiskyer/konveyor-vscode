@@ -2,19 +2,24 @@ import * as vscode from "vscode";
 import { AnalysisProfile } from "@editor-extensions/shared";
 import { ExtensionState } from "../../extensionState";
 import { getBundledProfiles } from "./bundledProfiles";
+import {
+  readProjectProfiles,
+  writeProjectProfiles,
+  initializeProjectProfiles,
+  ensureProjectConfigDirectory,
+} from "../fileUtils";
 
-const USER_PROFILE_KEY = "userProfiles";
 const ACTIVE_PROFILE_KEY = "activeProfileId";
 
-export function getUserProfiles(context: vscode.ExtensionContext): AnalysisProfile[] {
-  return context.globalState.get<AnalysisProfile[]>(USER_PROFILE_KEY) ?? [];
+export async function getUserProfiles(): Promise<AnalysisProfile[]> {
+  await ensureProjectConfigDirectory();
+  await initializeProjectProfiles();
+  return await readProjectProfiles();
 }
 
-export function saveUserProfiles(
-  context: vscode.ExtensionContext,
-  profiles: AnalysisProfile[],
-): void {
-  context.globalState.update(USER_PROFILE_KEY, profiles);
+export async function saveUserProfiles(profiles: AnalysisProfile[]): Promise<void> {
+  await ensureProjectConfigDirectory();
+  await writeProjectProfiles(profiles);
 }
 
 export async function saveProfilesAndActiveId(
@@ -23,8 +28,8 @@ export async function saveProfilesAndActiveId(
   userProfiles: AnalysisProfile[],
   activeId: string,
 ) {
-  await context.globalState.update(USER_PROFILE_KEY, userProfiles);
-  await context.workspaceState.update("activeProfileId", activeId);
+  await saveUserProfiles(userProfiles);
+  await context.workspaceState.update(ACTIVE_PROFILE_KEY, activeId);
   state.mutateData((draft) => {
     draft.profiles = [...getBundledProfiles(), ...userProfiles];
     draft.activeProfileId = activeId;
@@ -42,18 +47,20 @@ export function getActiveProfileId(context: vscode.ExtensionContext): string | u
   return context.workspaceState.get<string>(ACTIVE_PROFILE_KEY);
 }
 
-export function getAllProfiles(context: vscode.ExtensionContext): AnalysisProfile[] {
+export async function getAllProfiles(): Promise<AnalysisProfile[]> {
   const bundled = getBundledProfiles();
-  const user = getUserProfiles(context);
+  const user = await getUserProfiles();
   return [...bundled, ...user];
 }
 
-export function getActiveProfile(state: ExtensionState): AnalysisProfile | undefined {
+export async function getActiveProfile(
+  state: ExtensionState,
+): Promise<AnalysisProfile | undefined> {
   const activeId = state.data.activeProfileId;
   if (!activeId) {
     return undefined;
   }
-  const allProfiles = getAllProfiles(state.extensionContext);
+  const allProfiles = await getAllProfiles();
   const activeProfile = allProfiles.find((p) => p.id === activeId);
   if (!activeProfile) {
     console.error(`Active profile with ID ${activeId} not found.`);
@@ -62,28 +69,112 @@ export function getActiveProfile(state: ExtensionState): AnalysisProfile | undef
   return activeProfile;
 }
 
-export function getLabelSelector(state: ExtensionState): string {
-  return getActiveProfile(state)?.labelSelector ?? "(discovery)";
+export async function getLabelSelector(state: ExtensionState): Promise<string> {
+  const activeProfile = await getActiveProfile(state);
+  return activeProfile?.labelSelector ?? "(discovery)";
 }
 
-export function getCustomRules(state: ExtensionState): string[] {
-  return getActiveProfile(state)?.customRules ?? [];
+export async function getCustomRules(state: ExtensionState): Promise<string[]> {
+  const activeProfile = await getActiveProfile(state);
+  return activeProfile?.customRules ?? [];
 }
 
-export function getUseDefaultRules(state: ExtensionState): boolean {
-  return getActiveProfile(state)?.useDefaultRules ?? true;
+export async function getUseDefaultRules(state: ExtensionState): Promise<boolean> {
+  const activeProfile = await getActiveProfile(state);
+  return activeProfile?.useDefaultRules ?? true;
 }
 
-export function updateActiveProfile(
+export async function updateActiveProfile(
   state: ExtensionState,
   updateFn: (profile: AnalysisProfile) => AnalysisProfile,
-): void {
-  state.mutateData((draft) => {
-    const idx = draft.profiles.findIndex((p) => p.id === draft.activeProfileId);
-    if (idx !== -1) {
-      draft.profiles[idx] = updateFn(draft.profiles[idx]);
+): Promise<void> {
+  const activeProfile = await getActiveProfile(state);
+  if (activeProfile) {
+    const userProfiles = await getUserProfiles();
+    const bundledProfiles = getBundledProfiles();
+
+    // Check if it's a user profile (not a bundled profile)
+    const userProfileIndex = userProfiles.findIndex((p) => p.id === activeProfile.id);
+    if (userProfileIndex !== -1) {
+      // Update the user profile
+      userProfiles[userProfileIndex] = updateFn(userProfiles[userProfileIndex]);
+      await saveUserProfiles(userProfiles);
     }
+
+    // Update the state
+    state.mutateData((draft) => {
+      const idx = draft.profiles.findIndex((p) => p.id === draft.activeProfileId);
+      if (idx !== -1) {
+        draft.profiles[idx] = updateFn(draft.profiles[idx]);
+      }
+    });
+  }
+}
+
+export async function loadProfilesIntoState(state: ExtensionState): Promise<void> {
+  const allProfiles = await getAllProfiles();
+  state.mutateData((draft) => {
+    draft.profiles = allProfiles;
   });
+}
+
+/**
+ * Migrate existing global profiles to project-specific storage.
+ * This function should be called during extension activation to ensure
+ * backward compatibility for existing users.
+ */
+export async function migrateGlobalProfilesToProject(
+  context: vscode.ExtensionContext,
+): Promise<void> {
+  const LEGACY_USER_PROFILE_KEY = "userProfiles";
+  const MIGRATION_COMPLETED_KEY = "profileMigrationCompleted";
+
+  // Check if migration has already been completed
+  const migrationCompleted = context.globalState.get<boolean>(MIGRATION_COMPLETED_KEY, false);
+  if (migrationCompleted) {
+    return;
+  }
+
+  try {
+    // Get legacy profiles from globalState
+    const legacyProfiles = context.globalState.get<AnalysisProfile[]>(LEGACY_USER_PROFILE_KEY, []);
+
+    if (legacyProfiles.length === 0) {
+      // No legacy profiles to migrate
+      await context.globalState.update(MIGRATION_COMPLETED_KEY, true);
+      return;
+    }
+
+    // Ensure project config directory exists
+    await ensureProjectConfigDirectory();
+
+    // Get existing project profiles (if any)
+    const existingProjectProfiles = await getUserProfiles();
+
+    // Merge legacy profiles with existing project profiles, avoiding duplicates
+    const allProfiles = [...existingProjectProfiles];
+
+    for (const legacyProfile of legacyProfiles) {
+      // Only add if not already exists in project profiles
+      const exists = allProfiles.find((p) => p.id === legacyProfile.id);
+      if (!exists) {
+        allProfiles.push(legacyProfile);
+      }
+    }
+
+    // Save merged profiles to project storage
+    await saveUserProfiles(allProfiles);
+
+    // Mark migration as completed
+    await context.globalState.update(MIGRATION_COMPLETED_KEY, true);
+
+    console.log(
+      `Successfully migrated ${legacyProfiles.length} profiles from global to project storage`,
+    );
+  } catch (error) {
+    console.error("Failed to migrate profiles from global to project storage:", error);
+    // Don't mark as completed on error, so it can be retried
+  }
 }
 
 export function buildLabelSelector(sources: string[], targets: string[]): string {

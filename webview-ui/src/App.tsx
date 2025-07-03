@@ -6,6 +6,7 @@ import ResolutionPage from "./components/ResolutionsPage/ResolutionsPage";
 import { WebviewType } from "@editor-extensions/shared";
 import { ExtensionStateProvider } from "./context/ExtensionStateContext";
 import { ProfileManagerPage } from "./components/ProfileManager/ProfileManagerPage";
+import { WizardContainer } from "./components/Wizard";
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<WebviewType>(viewType);
@@ -21,6 +22,7 @@ const App: React.FC = () => {
         {currentView === "sidebar" && <AnalysisPage />}
         {currentView === "resolution" && <ResolutionPage />}
         {currentView === "profiles" && <ProfileManagerPage />}
+        {currentView === "wizard" && <WizardContainer />}
       </ExtensionStateProvider>
     </div>
   );

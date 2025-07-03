@@ -18,4 +18,4 @@ declare global {
 export const vscode: VscodeApi = window.vscode;
 
 // export const viewType: string = "sidebar" | "resolution";
-export const viewType: WebviewType = window.viewType || "sidebar"; // Default to "sidebar" if not set
+export const viewType: WebviewType = window.viewType || "wizard"; // Default to "wizard" for step-by-step guidance

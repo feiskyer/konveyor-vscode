@@ -86,10 +86,19 @@ const commandsMap: (state: ExtensionState) => {
       if (!(await analyzerClient.canAnalyzeInteractive())) {
         return;
       }
+      state.mutateData((draft) => {
+        draft.serverState = "starting";
+      });
       try {
         await analyzerClient.start();
+        state.mutateData((draft) => {
+          draft.serverState = "running";
+        });
       } catch (e) {
         console.error("Could not start the server", e);
+        state.mutateData((draft) => {
+          draft.serverState = "startFailed";
+        });
       }
     },
     "konveyor.stopServer": async () => {

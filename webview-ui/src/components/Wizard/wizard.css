@@ -1,0 +1,112 @@
+/* Wizard Container Styles */
+.wizard-container {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.wizard-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin: 20px;
+  max-height: calc(100vh - 40px);
+}
+
+.wizard-card-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--pf-v5-global--spacer--lg);
+}
+
+.wizard-step-content {
+  overflow-y: auto;
+  max-height: 100%;
+  padding: 20px;
+}
+
+.wizard-navigation {
+  flex-shrink: 0;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--pf-v5-global--BorderColor--100);
+  background: white;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+
+/* Individual Step Styles */
+.wizard-step {
+  height: 100%;
+  overflow-y: auto;
+  padding-bottom: 20px;
+}
+
+.wizard-step-header {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 5;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--pf-v5-global--BorderColor--100);
+  margin-bottom: 20px;
+}
+
+.wizard-step-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Ensure cards within steps don't exceed available height */
+.wizard-step .pf-v5-c-card {
+  margin-bottom: 20px;
+}
+
+.wizard-step .pf-v5-c-card:last-child {
+  margin-bottom: 0;
+}
+
+/* Custom scrollbar styling for better UX */
+.wizard-card-body::-webkit-scrollbar,
+.wizard-step-content::-webkit-scrollbar,
+.wizard-step::-webkit-scrollbar {
+  width: 8px;
+}
+
+.wizard-card-body::-webkit-scrollbar-track,
+.wizard-step-content::-webkit-scrollbar-track,
+.wizard-step::-webkit-scrollbar-track {
+  background: var(--pf-v5-global--BackgroundColor--200);
+  border-radius: 4px;
+}
+
+.wizard-card-body::-webkit-scrollbar-thumb,
+.wizard-step-content::-webkit-scrollbar-thumb,
+.wizard-step::-webkit-scrollbar-thumb {
+  background: var(--pf-v5-global--BorderColor--200);
+  border-radius: 4px;
+}
+
+.wizard-card-body::-webkit-scrollbar-thumb:hover,
+.wizard-step-content::-webkit-scrollbar-thumb:hover,
+.wizard-step::-webkit-scrollbar-thumb:hover {
+  background: var(--pf-v5-global--BorderColor--300);
+}
+
+/* Responsive adjustments */
+@media (max-height: 600px) {
+  .wizard-card {
+    margin: 10px;
+    max-height: calc(100vh - 20px);
+  }
+
+  .wizard-card-body {
+    padding: var(--pf-v5-global--spacer--md);
+  }
+
+  .wizard-step-content {
+    padding: 10px;
+  }
+}

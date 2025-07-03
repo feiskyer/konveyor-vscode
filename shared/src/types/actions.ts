@@ -21,6 +21,9 @@ export const OPEN_PROFILE_MANAGER = "OPEN_PROFILE_MANAGER";
 export const ADD_PROFILE = "ADD_PROFILE";
 export const DELETE_PROFILE = "DELETE_PROFILE";
 export const UPDATE_PROFILE = "UPDATE_PROFILE";
+export const WIZARD_NEXT_STEP = "WIZARD_NEXT_STEP";
+export const WIZARD_PREVIOUS_STEP = "WIZARD_PREVIOUS_STEP";
+export const WIZARD_SET_STEP = "WIZARD_SET_STEP";
 
 export type WebviewActionType =
   | typeof SET_STATE
@@ -46,7 +49,10 @@ export type WebviewActionType =
   | typeof ADD_PROFILE
   | typeof DELETE_PROFILE
   | typeof UPDATE_PROFILE
-  | typeof OPEN_PROFILE_MANAGER;
+  | typeof OPEN_PROFILE_MANAGER
+  | typeof WIZARD_NEXT_STEP
+  | typeof WIZARD_PREVIOUS_STEP
+  | typeof WIZARD_SET_STEP;
 export interface WebviewAction<S, T> {
   type: S;
   payload: T;
