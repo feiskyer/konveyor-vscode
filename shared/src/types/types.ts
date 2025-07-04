@@ -176,7 +176,6 @@ export interface ExtensionData {
   isAnalyzing: boolean;
   isFetchingSolution: boolean;
   isStartingServer: boolean;
-  isInitializingServer: boolean;
   isContinueInstalled: boolean;
   isAnalysisScheduled: boolean;
   serverState: ServerState;

@@ -24,7 +24,6 @@ export const AnalysisStep: React.FC = () => {
   const { 
     isAnalyzing, 
     isStartingServer, 
-    isInitializingServer,
     serverState, 
     ruleSets, 
     enhancedIncidents
@@ -34,7 +33,7 @@ export const AnalysisStep: React.FC = () => {
   const hasIncidents = enhancedIncidents.length > 0;
   
   const isServerReady = serverState === "running";
-  const canRunAnalysis = isServerReady && !isAnalyzing && !isStartingServer && !isInitializingServer;
+  const canRunAnalysis = isServerReady && !isAnalyzing && !isStartingServer;
   
   const totalIncidents = enhancedIncidents.length;
   const totalRuleSets = ruleSets.length;
@@ -130,11 +129,11 @@ export const AnalysisStep: React.FC = () => {
             <Button 
               variant="primary" 
               onClick={handleStartServer}
-              isLoading={isStartingServer || isInitializingServer}
-              isDisabled={isStartingServer || isInitializingServer}
+              isLoading={isStartingServer}
+              isDisabled={isStartingServer}
               style={{ marginTop: "16px" }}
             >
-              {isStartingServer || isInitializingServer ? "Starting..." : "Start Server"}
+              {isStartingServer ? "Starting..." : "Start Server"}
             </Button>
           )}
         </CardBody>

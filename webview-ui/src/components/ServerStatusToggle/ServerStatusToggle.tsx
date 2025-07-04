@@ -6,7 +6,6 @@ import "./styles.css";
 interface ServerStatusToggleProps {
   isRunning: boolean;
   isStarting: boolean;
-  isInitializing: boolean;
   hasWarning: boolean;
   onToggle: () => void;
 }
@@ -14,7 +13,6 @@ interface ServerStatusToggleProps {
 export function ServerStatusToggle({
   isRunning,
   isStarting,
-  isInitializing,
   hasWarning,
   onToggle,
 }: ServerStatusToggleProps) {
@@ -23,18 +21,16 @@ export function ServerStatusToggle({
       <div className="server-status-wrapper">
         {isStarting ? (
           <Spinner size="sm" aria-label="Loading spinner" className="server-status-spinner" />
-        ) : isInitializing ? (
-          <Spinner size="sm" aria-label="Loading spinner" className="server-status-spinner" />
         ) : (
           <Button
             variant="control"
             size="sm"
             icon={<OnIcon />}
             onClick={onToggle}
-            isDisabled={isStarting || isInitializing || hasWarning}
+            isDisabled={isStarting || hasWarning}
             className="server-action-button"
           >
-            {isStarting || isInitializing ? "" : isRunning ? "Stop" : "Start"}
+            {isStarting ? "" : isRunning ? "Stop" : "Start"}
           </Button>
         )}
         <p>Server Status</p>
