@@ -242,7 +242,7 @@ class VsCodeExtension {
         draft.wizardState.stepData.profile.selectedProfileId = activeProfileId;
 
         // Update analysis config
-        updateAnalysisConfig(draft, this.paths.settingsYaml.toString(true));
+        updateAnalysisConfig(draft, this.paths.settingsYaml.fsPath);
       });
     } catch (error) {
       console.error("Error loading profiles:", error);

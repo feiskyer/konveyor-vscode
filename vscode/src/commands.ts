@@ -148,6 +148,9 @@ const commandsMap: (state: ExtensionState) => {
       });
 
       try {
+        // Ensure provider settings file exists before trying to read it
+        await copySampleProviderSettings(false);
+
         // Get the model provider configuration from settings YAML
         const modelConfig = await getModelConfig(paths().settingsYaml);
         if (!modelConfig) {
