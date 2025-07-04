@@ -1,112 +1,322 @@
-/* Wizard Container Styles */
+/* Wizard Container Styles - VS Code Theme Compatible */
 .wizard-container {
   height: 100vh;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  background-color: var(--vscode-editor-background);
+  color: var(--vscode-editor-foreground);
+  font-family: var(--vscode-font-family);
+  overflow: hidden;
+}
+
+/* Wizard Header with Navigation */
+.wizard-header {
+  flex-shrink: 0;
+  background-color: var(--vscode-editor-background);
+  border-bottom: 1px solid var(--vscode-panel-border);
+  padding: 1rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.wizard-header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.wizard-title {
+  color: var(--vscode-editor-foreground) !important;
+  margin-bottom: 1rem !important;
+  font-weight: 600;
+}
+
+/* Step Indicator Navigation */
+.wizard-step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+.wizard-step-indicator-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  min-width: 120px;
+}
+
+.wizard-step-circle {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.wizard-step-circle--completed {
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border: 2px solid var(--vscode-button-background);
+}
+
+.wizard-step-circle--current {
+  background-color: var(--vscode-focusBorder);
+  color: var(--vscode-button-foreground);
+  border: 2px solid var(--vscode-focusBorder);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+}
+
+.wizard-step-circle--pending {
+  background-color: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 2px solid var(--vscode-input-border);
+}
+
+.wizard-step-number {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.wizard-step-label {
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.wizard-step-title {
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.wizard-step-title--completed {
+  color: var(--vscode-button-background);
+}
+
+.wizard-step-title--current {
+  color: var(--vscode-focusBorder);
+  font-weight: 600;
+}
+
+.wizard-step-title--pending {
+  color: var(--vscode-descriptionForeground);
+}
+
+.wizard-step-connector {
+  position: absolute;
+  top: 1.25rem;
+  left: calc(50% + 1.25rem);
+  right: calc(-50% + 1.25rem);
+  height: 2px;
+  z-index: 1;
+  transition: background-color 0.3s ease;
+}
+
+.wizard-step-connector--completed {
+  background-color: var(--vscode-button-background);
+}
+
+.wizard-step-connector--current,
+.wizard-step-connector--pending {
+  background-color: var(--vscode-input-border);
+}
+
+/* Main Content Area */
+.wizard-main {
+  flex: 1;
+  overflow: hidden;
+  padding: 1rem 1.5rem 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .wizard-card {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  margin: 20px;
-  max-height: calc(100vh - 40px);
+  height: 100%;
+  background-color: var(--vscode-editor-background) !important;
+  border: 1px solid var(--vscode-panel-border) !important;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .wizard-card-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: var(--pf-v5-global--spacer--lg);
+  height: 100%;
+  padding: 1.5rem !important;
+  overflow: hidden;
+  background-color: var(--vscode-editor-background) !important;
 }
 
 .wizard-step-content {
+  height: 100%;
   overflow-y: auto;
-  max-height: 100%;
-  padding: 20px;
+  padding-right: 0.5rem;
+}
+
+/* Footer Navigation */
+.wizard-footer {
+  flex-shrink: 0;
+  background-color: var(--vscode-editor-background);
+  border-top: 1px solid var(--vscode-panel-border);
+  padding: 1rem 1.5rem;
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .wizard-navigation {
-  flex-shrink: 0;
-  margin-top: 40px;
-  padding-top: 20px;
-  border-top: 1px solid var(--pf-v5-global--BorderColor--100);
-  background: white;
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-/* Individual Step Styles */
-.wizard-step {
-  height: 100%;
-  overflow-y: auto;
-  padding-bottom: 20px;
+.wizard-nav-button {
+  min-width: 80px;
+  font-weight: 500;
 }
 
-.wizard-step-header {
-  position: sticky;
-  top: 0;
-  background: white;
-  z-index: 5;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--pf-v5-global--BorderColor--100);
-  margin-bottom: 20px;
-}
-
-.wizard-step-body {
-  flex: 1;
-  overflow-y: auto;
-}
-
-/* Ensure cards within steps don't exceed available height */
-.wizard-step .pf-v5-c-card {
-  margin-bottom: 20px;
-}
-
-.wizard-step .pf-v5-c-card:last-child {
-  margin-bottom: 0;
-}
-
-/* Custom scrollbar styling for better UX */
-.wizard-card-body::-webkit-scrollbar,
-.wizard-step-content::-webkit-scrollbar,
-.wizard-step::-webkit-scrollbar {
+/* Custom scrollbar styling for VS Code theme compatibility */
+.wizard-step-content::-webkit-scrollbar {
   width: 8px;
 }
 
-.wizard-card-body::-webkit-scrollbar-track,
-.wizard-step-content::-webkit-scrollbar-track,
-.wizard-step::-webkit-scrollbar-track {
-  background: var(--pf-v5-global--BackgroundColor--200);
+.wizard-step-content::-webkit-scrollbar-track {
+  background: var(--vscode-scrollbarSlider-background);
   border-radius: 4px;
 }
 
-.wizard-card-body::-webkit-scrollbar-thumb,
-.wizard-step-content::-webkit-scrollbar-thumb,
-.wizard-step::-webkit-scrollbar-thumb {
-  background: var(--pf-v5-global--BorderColor--200);
+.wizard-step-content::-webkit-scrollbar-thumb {
+  background: var(--vscode-scrollbarSlider-background);
   border-radius: 4px;
 }
 
-.wizard-card-body::-webkit-scrollbar-thumb:hover,
-.wizard-step-content::-webkit-scrollbar-thumb:hover,
-.wizard-step::-webkit-scrollbar-thumb:hover {
-  background: var(--pf-v5-global--BorderColor--300);
+.wizard-step-content::-webkit-scrollbar-thumb:hover {
+  background: var(--vscode-scrollbarSlider-hoverBackground);
 }
 
-/* Responsive adjustments */
-@media (max-height: 600px) {
-  .wizard-card {
-    margin: 10px;
-    max-height: calc(100vh - 20px);
+.wizard-step-content::-webkit-scrollbar-thumb:active {
+  background: var(--vscode-scrollbarSlider-activeBackground);
+}
+
+/* Ensure PatternFly components respect VS Code theming */
+.wizard-container .pf-v5-c-card {
+  background-color: var(--vscode-editor-background) !important;
+  border-color: var(--vscode-panel-border) !important;
+  color: var(--vscode-editor-foreground) !important;
+}
+
+.wizard-container .pf-v5-c-button {
+  font-family: var(--vscode-font-family) !important;
+}
+
+.wizard-container .pf-v5-c-button--m-primary {
+  background-color: var(--vscode-button-background) !important;
+  border-color: var(--vscode-button-background) !important;
+  color: var(--vscode-button-foreground) !important;
+}
+
+.wizard-container .pf-v5-c-button--m-primary:hover:not(:disabled) {
+  background-color: var(--vscode-button-hoverBackground) !important;
+  border-color: var(--vscode-button-hoverBackground) !important;
+}
+
+.wizard-container .pf-v5-c-button--m-secondary {
+  background-color: var(--vscode-button-secondaryBackground) !important;
+  border-color: var(--vscode-button-secondaryBackground) !important;
+  color: var(--vscode-button-secondaryForeground) !important;
+}
+
+.wizard-container .pf-v5-c-button--m-secondary:hover:not(:disabled) {
+  background-color: var(--vscode-button-secondaryHoverBackground) !important;
+  border-color: var(--vscode-button-secondaryHoverBackground) !important;
+}
+
+.wizard-container .pf-v5-c-button:disabled {
+  background-color: var(--vscode-button-background) !important;
+  border-color: var(--vscode-button-background) !important;
+  color: var(--vscode-button-foreground) !important;
+  opacity: 0.4 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .wizard-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .wizard-main {
+    padding: 0.75rem 1rem 0;
+  }
+
+  .wizard-footer {
+    padding: 0.75rem 1rem;
+  }
+
+  .wizard-step-indicator-item {
+    min-width: 80px;
+  }
+
+  .wizard-step-circle {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.75rem;
+  }
+
+  .wizard-step-title {
+    font-size: 0.6875rem;
   }
 
   .wizard-card-body {
-    padding: var(--pf-v5-global--spacer--md);
+    padding: 1rem !important;
+  }
+}
+
+@media (max-height: 600px) {
+  .wizard-header {
+    padding: 0.5rem 1rem;
   }
 
-  .wizard-step-content {
-    padding: 10px;
+  .wizard-title {
+    margin-bottom: 0.5rem !important;
+  }
+
+  .wizard-footer {
+    padding: 0.5rem 1rem;
+  }
+
+  .wizard-card-body {
+    padding: 1rem !important;
+  }
+}
+
+/* Ensure content doesn't overflow */
+.wizard-container * {
+  box-sizing: border-box;
+}
+
+/* Fix any potential PatternFly z-index issues */
+.wizard-container .pf-v5-c-page,
+.wizard-container .pf-v5-c-card,
+.wizard-container .pf-v5-c-card__body {
+  z-index: auto !important;
+}
+
+/* Additional theme variables for better integration */
+.wizard-container {
+  --wizard-primary-color: var(--vscode-focusBorder, #007acc);
+  --wizard-success-color: var(--vscode-button-background, #007acc);
+  --wizard-border-color: var(--vscode-panel-border, #303031);
+  --wizard-shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Dark theme adjustments */
+@media (prefers-color-scheme: dark) {
+  .wizard-container {
+    --wizard-shadow-color: rgba(0, 0, 0, 0.3);
   }
 }
