@@ -45,9 +45,13 @@ export const WizardContainer: React.FC = () => {
       case KonveyorWizardStep.Profile:
         return activeProfileId !== "";
       case KonveyorWizardStep.Analysis:
-        return enhancedIncidents.length > 0;
+        // Allow navigation when analysis is completed, regardless of incidents found
+        return wizardState.stepData.analysis.analysisCompleted;
       case KonveyorWizardStep.Resolution:
-        return false; // Last step, no next
+        // Enable finish when: no issues found OR solutions have been applied
+        const noIssuesFound = enhancedIncidents.length === 0;
+        const solutionsApplied = wizardState.stepData.resolution.solutionApplied;
+        return noIssuesFound || solutionsApplied;
       default:
         return false;
     }
@@ -111,6 +115,10 @@ export const WizardContainer: React.FC = () => {
     } else if (stepIndex === currentStepIndex) {
       return "current";
     } else {
+      // Check if this is the Analysis step and analysis is completed
+      // if (step === KonveyorWizardStep.Analysis && wizardState.stepData.analysis.analysisCompleted) {
+      //   return "completed";
+      // }
       return "pending";
     }
   };
@@ -128,7 +136,7 @@ export const WizardContainer: React.FC = () => {
         {steps.map((step, index) => {
           const status = getStepStatus(step);
           const isLast = index === steps.length - 1;
-          
+
           return (
             <div key={step} className="wizard-step-indicator-item">
               <div className={`wizard-step-circle wizard-step-circle--${status}`}>
@@ -169,7 +177,7 @@ export const WizardContainer: React.FC = () => {
           {renderStepIndicator()}
         </div>
       </div>
-      
+
       <div className="wizard-main">
         <Card className="wizard-card">
           <CardBody className="wizard-card-body">
@@ -183,9 +191,9 @@ export const WizardContainer: React.FC = () => {
       <div className="wizard-footer">
         <Flex className="wizard-navigation" justifyContent={{ default: 'justifyContentSpaceBetween' }}>
           <FlexItem>
-            <Button 
-              variant="secondary" 
-              onClick={handleBack} 
+            <Button
+              variant="secondary"
+              onClick={handleBack}
               isDisabled={!canNavigateBack()}
               className="wizard-nav-button"
             >
@@ -193,9 +201,9 @@ export const WizardContainer: React.FC = () => {
             </Button>
           </FlexItem>
           <FlexItem>
-            <Button 
-              variant="primary" 
-              onClick={handleNext} 
+            <Button
+              variant="primary"
+              onClick={handleNext}
               isDisabled={!canNavigateForward()}
               className="wizard-nav-button"
             >

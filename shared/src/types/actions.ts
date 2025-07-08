@@ -24,6 +24,7 @@ export const UPDATE_PROFILE = "UPDATE_PROFILE";
 export const WIZARD_NEXT_STEP = "WIZARD_NEXT_STEP";
 export const WIZARD_PREVIOUS_STEP = "WIZARD_PREVIOUS_STEP";
 export const WIZARD_SET_STEP = "WIZARD_SET_STEP";
+export const WIZARD_FINISH = "WIZARD_FINISH";
 
 export type WebviewActionType =
   | typeof SET_STATE
@@ -52,7 +53,8 @@ export type WebviewActionType =
   | typeof OPEN_PROFILE_MANAGER
   | typeof WIZARD_NEXT_STEP
   | typeof WIZARD_PREVIOUS_STEP
-  | typeof WIZARD_SET_STEP;
+  | typeof WIZARD_SET_STEP
+  | typeof WIZARD_FINISH;
 export interface WebviewAction<S, T> {
   type: S;
   payload: T;

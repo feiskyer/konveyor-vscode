@@ -28,6 +28,7 @@ import {
   WIZARD_NEXT_STEP,
   WIZARD_PREVIOUS_STEP,
   WIZARD_SET_STEP,
+  WIZARD_FINISH,
   WizardStep,
   WebviewAction,
   WebviewActionType,
@@ -173,8 +174,13 @@ const actions: {
       true,
     );
   },
-  [APPLY_FILE](change: LocalChange) {
+  [APPLY_FILE](change: LocalChange, state) {
     vscode.commands.executeCommand("konveyor.applyFile", vscode.Uri.from(change.originalUri), true);
+
+    // Update wizard state to mark that solutions have been applied
+    state.mutateData((draft) => {
+      draft.wizardState.stepData.resolution.solutionApplied = true;
+    });
   },
   [DISCARD_FILE](change: LocalChange) {
     vscode.commands.executeCommand(
@@ -227,6 +233,10 @@ const actions: {
         if (!draft.wizardState.completedSteps.includes(draft.wizardState.currentStep)) {
           draft.wizardState.completedSteps.push(draft.wizardState.currentStep);
         }
+      } else {
+        // On final step, finish the wizard - reset all state
+        resetWizardState(draft);
+        vscode.commands.executeCommand("konveyor.closeWizard");
       }
     });
   },
@@ -261,6 +271,14 @@ const actions: {
       }
     });
   },
+
+  [WIZARD_FINISH]: (_, state) => {
+    state.mutateData((draft) => {
+      resetWizardState(draft);
+    });
+    // Close the wizard webview
+    vscode.commands.executeCommand("konveyor.closeWizard");
+  },
 };
 
 export const messageHandler = async (
@@ -278,6 +296,35 @@ export const messageHandler = async (
 const defaultHandler = (message: WebviewAction<WebviewActionType, unknown>) => {
   console.error("Unknown message from webview:", message);
 };
+
+function resetWizardState(draft: any) {
+  // Reset wizard state completely
+  draft.wizardState.completedSteps = [];
+  draft.wizardState.currentStep = WizardStep.Setup;
+  draft.wizardState.canNavigateBack = false;
+  draft.wizardState.canNavigateForward = false;
+
+  // Reset step data
+  draft.wizardState.stepData.setup.providerConfigured = false;
+  draft.wizardState.stepData.profile.selectedProfileId = undefined;
+  draft.wizardState.stepData.profile.profilesLoaded = false;
+  draft.wizardState.stepData.analysis.analysisCompleted = false;
+  draft.wizardState.stepData.analysis.hasIncidents = false;
+  draft.wizardState.stepData.resolution.selectedIncidents = [];
+  draft.wizardState.stepData.resolution.solutionApplied = false;
+
+  // Clear solution-related state
+  draft.localChanges = [];
+  draft.solutionData = undefined;
+  draft.solutionState = "initial";
+  draft.isFetchingSolution = false;
+  draft.chatMessages = [];
+
+  // Clear analysis state
+  draft.enhancedIncidents = [];
+  draft.ruleSets = [];
+  draft.isAnalyzing = false;
+}
 
 function updateAnalysisConfigFromActiveProfile(draft: ExtensionData) {
   const activeProfile = draft.profiles.find((p) => p.id === draft.activeProfileId);

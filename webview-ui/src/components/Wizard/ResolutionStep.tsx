@@ -19,6 +19,7 @@ import {
   Title,
   Content,
 } from "@patternfly/react-core";
+import { CheckCircleIcon } from "@patternfly/react-icons";
 import { useExtensionStateContext } from "../../context/ExtensionStateContext";
 import { FileChanges } from "../ResolutionsPage/FileChanges";
 import { getSolution } from "../../hooks/actions";
@@ -94,13 +95,15 @@ export const ResolutionStep: React.FC = () => {
 
         <div className="wizard-step-content">
           <Alert
-            variant={AlertVariant.info}
-            title="No issues to resolve"
+            variant={AlertVariant.success}
+            title="Migration analysis completed successfully"
             isInline
             style={{ marginTop: "20px" }}
           >
+            <CheckCircleIcon color="var(--pf-global--success-color--100)" />
+            {" "}
             No migration issues were found during analysis. Your codebase appears to be compatible
-            with the target technology, or you may need to run the analysis again with different settings.
+            with the target technology. The migration wizard has completed successfully.
           </Alert>
         </div>
       </div>

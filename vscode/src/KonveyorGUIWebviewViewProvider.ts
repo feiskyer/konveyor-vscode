@@ -124,6 +124,15 @@ export class KonveyorGUIWebviewViewProvider implements WebviewViewProvider {
     }
   }
 
+  public closeWebviewPanel(): void {
+    if (this._panel) {
+      this._panel.dispose();
+      this._panel = undefined;
+      this._isWebviewReady = false;
+      this._isPanelReady = false;
+    }
+  }
+
   private initializeWebview(webview: Webview, data: Immutable<ExtensionData>): void {
     const isProd = process.env.NODE_ENV === "production";
     const extensionUri = this._extensionState.extensionContext.extensionUri;

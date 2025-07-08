@@ -88,16 +88,19 @@ const commandsMap: (state: ExtensionState) => {
       }
       state.mutateData((draft) => {
         draft.serverState = "starting";
+        draft.isStartingServer = true;
       });
       try {
         await analyzerClient.start();
         state.mutateData((draft) => {
           draft.serverState = "running";
+          draft.isStartingServer = false;
         });
       } catch (e) {
         console.error("Could not start the server", e);
         state.mutateData((draft) => {
           draft.serverState = "startFailed";
+          draft.isStartingServer = false;
         });
       }
     },
@@ -547,6 +550,10 @@ const commandsMap: (state: ExtensionState) => {
     "konveyor.showAnalysisPanel": () => {
       const resolutionProvider = state.webviewProviders?.get("sidebar");
       resolutionProvider?.showWebviewPanel();
+    },
+    "konveyor.closeWizard": () => {
+      const sidebarProvider = state.webviewProviders?.get("sidebar");
+      sidebarProvider?.closeWebviewPanel();
     },
     "konveyor.openAnalysisDetails": async (item: IncidentTypeItem) => {
       //TODO: pass the item to webview and move the focus
