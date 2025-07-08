@@ -18,11 +18,11 @@ import { useExtensionStateContext } from "../../context/ExtensionStateContext";
 
 export const ProfileStep: React.FC = () => {
   const { state, dispatch } = useExtensionStateContext();
-  const { profiles, activeProfileId } = state;
+  const { profiles, activeProfileId, wizardState } = state;
   const [isSelectOpen, setIsSelectOpen] = useState(false);
 
   const isProfileSelected = !!activeProfileId;
-  const profilesLoaded = profiles.length > 0;
+  const profilesLoaded = wizardState.stepData.profile.profilesLoaded;
 
   const handleProfileSelect = (profileId: string) => {
     dispatch({ type: "SET_ACTIVE_PROFILE", payload: profileId });
@@ -57,108 +57,108 @@ export const ProfileStep: React.FC = () => {
       </div>
 
       <div className="wizard-step-content">
+        <Card style={{ marginTop: "20px" }}>
+          <CardTitle>Select Analysis Profile</CardTitle>
+          <CardBody>
+            {!profilesLoaded ? (
+              <Alert variant={AlertVariant.info} title="Loading profiles..." isInline />
+            ) : (
+              <>
+                <Select
+                  toggle={(toggleRef) => (
+                    <button
+                      ref={toggleRef}
+                      onClick={() => setIsSelectOpen(!isSelectOpen)}
+                      style={{
+                        marginBottom: "16px",
+                        width: "100%",
+                        padding: "8px",
+                        textAlign: "left",
+                      }}
+                    >
+                      {activeProfileId
+                        ? profiles.find((p) => p.id === activeProfileId)?.name
+                        : "Select an analysis profile..."}
+                    </button>
+                  )}
+                  onSelect={(_, profileId) => handleProfileSelect(profileId as string)}
+                  selected={activeProfileId}
+                  isOpen={isSelectOpen}
+                  onOpenChange={(isOpen) => setIsSelectOpen(isOpen)}
+                >
+                  {profiles.map((profile) => (
+                    <SelectOption key={profile.id} value={profile.id}>
+                      {profile.name} {profile.readOnly && "(Built-in)"}
+                    </SelectOption>
+                  ))}
+                </Select>
 
-      <Card style={{ marginTop: "20px" }}>
-        <CardTitle>Select Analysis Profile</CardTitle>
-        <CardBody>
-          {!profilesLoaded ? (
-            <Alert variant={AlertVariant.info} title="Loading profiles..." isInline />
-          ) : (
-            <>
-              <Select
-                toggle={(toggleRef) => (
-                  <button
-                    ref={toggleRef}
-                    onClick={() => setIsSelectOpen(!isSelectOpen)}
-                    style={{
-                      marginBottom: "16px",
-                      width: "100%",
-                      padding: "8px",
-                      textAlign: "left",
-                    }}
-                  >
-                    {activeProfileId
-                      ? profiles.find((p) => p.id === activeProfileId)?.name
-                      : "Select an analysis profile..."}
-                  </button>
-                )}
-                onSelect={(_, profileId) => handleProfileSelect(profileId as string)}
-                selected={activeProfileId}
-                isOpen={isSelectOpen}
-                onOpenChange={(isOpen) => setIsSelectOpen(isOpen)}
-              >
-                {profiles.map((profile) => (
-                  <SelectOption key={profile.id} value={profile.id}>
-                    {profile.name} {profile.readOnly && "(Built-in)"}
-                  </SelectOption>
-                ))}
-              </Select>
-
-              <Flex>
-                <FlexItem>
-                  <Button variant="secondary" onClick={handleCreateNewProfile}>
-                    Create New Profile
-                  </Button>
-                </FlexItem>
-                {activeProfileId && !selectedProfile?.readOnly && (
+                <Flex>
                   <FlexItem>
-                    <Button variant="link" onClick={handleEditProfile}>
-                      Edit Selected Profile
+                    <Button variant="secondary" onClick={handleCreateNewProfile}>
+                      Create New Profile
                     </Button>
                   </FlexItem>
-                )}
-              </Flex>
-            </>
-          )}
-        </CardBody>
-      </Card>
-
-      {selectedProfile && (
-        <Card style={{ marginTop: "20px" }}>
-          <CardTitle>Profile Details</CardTitle>
-          <CardBody>
-            <Content>
-              <h3>{selectedProfile.name}</h3>
-              <p>
-                <strong>Label Selector:</strong> {selectedProfile.labelSelector}
-              </p>
-
-              <Divider style={{ margin: "16px 0" }} />
-
-              <h4>Rules Configuration</h4>
-              <p>
-                <strong>Use Default Rules:</strong> {selectedProfile.useDefaultRules ? "Yes" : "No"}
-              </p>
-
-              {selectedProfile.customRules.length > 0 && (
-                <>
-                  <p>
-                    <strong>Custom Rules:</strong>
-                  </p>
-                  <ul>
-                    {selectedProfile.customRules.map((rule, index) => (
-                      <li key={index}>{rule}</li>
-                    ))}
-                  </ul>
-                </>
-              )}
-
-              {selectedProfile.readOnly && (
-                <Alert
-                  variant={AlertVariant.info}
-                  title="This is a built-in profile"
-                  isInline
-                  style={{ marginTop: "16px" }}
-                >
-                  Built-in profiles are pre-configured for common migration scenarios and cannot be
-                  modified. You can create a custom profile based on this one if you need different
-                  settings.
-                </Alert>
-              )}
-            </Content>
+                  {activeProfileId && !selectedProfile?.readOnly && (
+                    <FlexItem>
+                      <Button variant="link" onClick={handleEditProfile}>
+                        Edit Selected Profile
+                      </Button>
+                    </FlexItem>
+                  )}
+                </Flex>
+              </>
+            )}
           </CardBody>
         </Card>
-      )}
+
+        {selectedProfile && (
+          <Card style={{ marginTop: "20px" }}>
+            <CardTitle>Profile Details</CardTitle>
+            <CardBody>
+              <Content>
+                <h3>{selectedProfile.name}</h3>
+                <p>
+                  <strong>Label Selector:</strong> {selectedProfile.labelSelector}
+                </p>
+
+                <Divider style={{ margin: "16px 0" }} />
+
+                <h4>Rules Configuration</h4>
+                <p>
+                  <strong>Use Default Rules:</strong>{" "}
+                  {selectedProfile.useDefaultRules ? "Yes" : "No"}
+                </p>
+
+                {selectedProfile.customRules.length > 0 && (
+                  <>
+                    <p>
+                      <strong>Custom Rules:</strong>
+                    </p>
+                    <ul>
+                      {selectedProfile.customRules.map((rule, index) => (
+                        <li key={index}>{rule}</li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+
+                {selectedProfile.readOnly && (
+                  <Alert
+                    variant={AlertVariant.info}
+                    title="This is a built-in profile"
+                    isInline
+                    style={{ marginTop: "16px" }}
+                  >
+                    Built-in profiles are pre-configured for common migration scenarios and cannot
+                    be modified. You can create a custom profile based on this one if you need
+                    different settings.
+                  </Alert>
+                )}
+              </Content>
+            </CardBody>
+          </Card>
+        )}
 
         {isProfileSelected && (
           <Alert
