@@ -1,0 +1,17 @@
+node_modules/
+out/
+build/
+dist/
+downloaded_assets/
+downloaded_cache/
+vscode/jdtls-plugin/
+*.vsix
+
+# TypeScript build info
+**/tsconfig.tsbuildinfo
+vscode/.metadata
+
+# Miscellaneous
+.vscode/*.aider*
+.vscode/settings.json
+.konveyor

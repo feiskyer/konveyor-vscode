@@ -1,0 +1,251 @@
+import { Uri } from "vscode";
+import { SolutionEffortLevel } from "../effort";
+
+export type WebviewType = "sidebar" | "resolution" | "profiles" | "wizard";
+
+export enum WizardStep {
+  Setup = "setup",
+  Profile = "profile",
+  Analysis = "analysis",
+  Resolution = "resolution",
+}
+
+export interface WizardState {
+  currentStep: WizardStep;
+  completedSteps: WizardStep[];
+  canNavigateBack: boolean;
+  canNavigateForward: boolean;
+  stepData: {
+    setup: {
+      providerConfigured: boolean;
+    };
+    profile: {
+      selectedProfileId?: string;
+      profilesLoaded: boolean;
+    };
+    analysis: {
+      analysisCompleted: boolean;
+      hasIncidents: boolean;
+    };
+    resolution: {
+      selectedIncidents: EnhancedIncident[];
+      solutionApplied: boolean;
+    };
+  };
+}
+
+export interface Incident {
+  uri: string;
+  lineNumber?: number;
+  message: string;
+  codeSnip?: string;
+}
+
+export interface Link {
+  url: string;
+  title?: string;
+}
+
+export type Category = "potential" | "optional" | "mandatory";
+
+export interface SuccessRateMetric {
+  counted_solutions: number;
+  accepted_solutions: number;
+}
+
+export interface Violation {
+  description: string;
+  category?: Category;
+  labels?: string[];
+  incidents: Incident[];
+  effort?: number;
+}
+
+export type EnhancedViolation = Violation & {
+  id: string;
+  rulesetName?: string;
+  violationName?: string;
+};
+// Keep EnhancedIncident type aligned with KAI backend type:
+// https://github.com/konveyor/kai/blob/82e195916be14eddd08c4e2bfb69afc0880edfcb/kai/analyzer_types.py#L89-L106
+export interface EnhancedIncident extends Incident {
+  violationId: string;
+  uri: string;
+  message: string;
+  activeProfileName?: string;
+  solutionServerIncidentId?: number;
+  ruleset_name?: string;
+  ruleset_description?: string;
+  violation_name?: string;
+  violation_description?: string;
+  violation_category?: Category;
+  violation_labels?: string[];
+  successRateMetric?: SuccessRateMetric;
+}
+
+export interface RuleSet {
+  name?: string;
+  description?: string;
+  tags?: string[];
+  activeProfileName?: string;
+  violations?: { [key: string]: EnhancedViolation };
+  insights?: { [key: string]: EnhancedViolation };
+  errors?: { [key: string]: string };
+  unmatched?: string[];
+  skipped?: string[];
+}
+
+export interface GetSolutionParams {
+  file_path: string;
+  incidents: Incident[];
+}
+export interface Change {
+  // relative file path before the change, may be empty if file was created in this change
+  original: string;
+  // relative file path after the change, may be empty if file was deleted in this change
+  modified: string;
+  // diff in unified format - tested with git diffs
+  diff: string;
+  // solution server id
+  solutionId?: number;
+}
+
+export interface GetSolutionResult {
+  encountered_errors: string[];
+  changes: Change[];
+  scope: Scope;
+  clientId: string;
+}
+
+export interface LocalChange {
+  modifiedUri: Uri;
+  originalUri: Uri;
+  diff: string;
+  state: "pending" | "applied" | "discarded";
+  solutionId?: number;
+  clientId: string;
+}
+
+export interface ResolutionMessage {
+  type: string;
+  solution: Solution;
+  violation: Violation;
+  incident: Incident;
+  isRelevantSolution: boolean;
+}
+
+export interface SolutionResponse {
+  diff: string;
+  encountered_errors: string[];
+  modified_files: string[];
+  clientId: string;
+}
+
+export interface Scope {
+  incidents: EnhancedIncident[];
+  effort: SolutionEffortLevel;
+}
+
+export interface ScopeWithAksMigrateContext {
+  incident: EnhancedIncident;
+}
+
+export type Solution = GetSolutionResult | SolutionResponse;
+
+export enum ChatMessageType {
+  String = "SimpleChatMessage",
+  Markdown = "MarkdownChatMessage",
+  JSON = "JsonChatMessage",
+}
+
+export interface ChatMessage {
+  kind: ChatMessageType;
+  value: { message: string } | Record<string, unknown>;
+  chatToken?: string;
+  messageToken: string;
+  timestamp: string;
+  extraContent?: React.ReactNode;
+}
+
+export interface ExtensionData {
+  workspaceRoot: string;
+  localChanges: LocalChange[];
+  ruleSets: RuleSet[];
+  enhancedIncidents: EnhancedIncident[];
+  resolutionPanelData: any;
+  isAnalyzing: boolean;
+  isFetchingSolution: boolean;
+  isStartingServer: boolean;
+  isContinueInstalled: boolean;
+  isAnalysisScheduled: boolean;
+  serverState: ServerState;
+  solutionState: SolutionState;
+  solutionData?: Solution;
+  solutionScope?: Scope;
+  chatMessages: ChatMessage[];
+  solutionEffort: SolutionEffortLevel;
+  analysisConfig: AnalysisConfig;
+  profiles: AnalysisProfile[];
+  activeProfileId: string | null;
+  wizardState: WizardState;
+}
+export type AnalysisConfig = {
+  labelSelectorValid: boolean;
+  providerConfigured: boolean;
+  providerKeyMissing: boolean;
+  customRulesConfigured: boolean;
+};
+
+export type ServerState =
+  | "initial"
+  | "configurationNeeded"
+  | "configurationReady"
+  | "starting"
+  | "readyToInitialize"
+  | "initializing"
+  | "startFailed"
+  | "running"
+  | "stopping"
+  | "stopped";
+
+export type SolutionState =
+  | "none"
+  | "started"
+  | "sent"
+  | "received"
+  | "failedOnStart"
+  | "failedOnSending";
+
+export const DiagnosticSource = "aksmigrate";
+
+export interface GenAIModelConfig {
+  args?: {
+    model?: string;
+    [key: string]: any;
+  };
+  environment?: {
+    OPENAI_API_KEY?: string;
+    [key: string]: string | undefined;
+  };
+  [key: string]: any;
+}
+
+export interface ProviderConfigFile {
+  models?: Record<string, GenAIModelConfig>;
+  active?: GenAIModelConfig;
+}
+
+export interface ProviderConfigStatus {
+  configured: boolean;
+  keyMissing: boolean;
+  usingDefault: boolean;
+  activeKey?: string;
+}
+export interface AnalysisProfile {
+  id: string;
+  name: string;
+  customRules: string[];
+  useDefaultRules: boolean;
+  labelSelector: string;
+  readOnly?: boolean;
+}

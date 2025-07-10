@@ -1,0 +1,45 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/vscode",
+        "--enable-proposed-api=konveyor.konveyor-ai"
+      ],
+
+      "cwd": "${workspaceFolder}/vscode",
+      "outFiles": ["${workspaceFolder}/vscode/out/**/*.js"],
+      "sourceMaps": true,
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/vscode/out/**",
+        "!**/node_modules/**"
+      ],
+
+      "preLaunchTask": "dev-without-shared"
+    },
+    {
+      "name": "__ Extension Tests (broken)",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/vscode",
+        "--extensionTestsPath=${workspaceFolder}/vscode/out/test/suite/index"
+      ],
+      "outFiles": ["${workspaceFolder}/vscode/out/test/**/*.js"],
+      "preLaunchTask": "npm: test-watch - vscode"
+    },
+    {
+      "name": "__ Run Dev Script",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+    }
+  ]
+}
