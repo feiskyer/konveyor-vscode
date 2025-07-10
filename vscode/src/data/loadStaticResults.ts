@@ -6,7 +6,7 @@ import { paths } from "../paths";
 export const loadStaticResults = async () => {
   const options: vscode.OpenDialogOptions = {
     defaultUri: paths().workspaceRepo,
-    openLabel: "Load Konveyor results",
+    openLabel: "Load AKS Migrate results",
     filters: { "json files": ["json"] },
     canSelectMany: true,
   };
@@ -20,21 +20,21 @@ export const loadStaticResults = async () => {
   const [analysisResults, solution] = await readDataFiles(uris);
 
   if (!analysisResults && !solution) {
-    vscode.window.showErrorMessage("Konveyor: failed to load data from selected file(s).");
+    vscode.window.showErrorMessage("AKS Migrate: failed to load data from selected file(s).");
     return;
   }
 
   if (analysisResults) {
     if (filePathsCorrect(analysisResults)) {
-      vscode.commands.executeCommand("konveyor.loadRuleSets", analysisResults);
+      vscode.commands.executeCommand("aksmigrate.loadRuleSets", analysisResults);
       vscode.window.showInformationMessage("Successfully loaded the analysis results");
     } else {
-      vscode.window.showErrorMessage("Konveyor: analysis results point to non-existing files.");
+      vscode.window.showErrorMessage("AKS Migrate: analysis results point to non-existing files.");
     }
   }
   if (solution) {
-    vscode.commands.executeCommand("konveyor.diffView.focus");
-    vscode.commands.executeCommand("konveyor.loadSolution", solution);
+    vscode.commands.executeCommand("aksmigrate.diffView.focus");
+    vscode.commands.executeCommand("aksmigrate.loadSolution", solution);
     vscode.window.showInformationMessage("Successfully loaded the solutions");
   }
 };
@@ -53,6 +53,6 @@ const filePathsCorrect = (ruleSets: RuleSet[]) =>
 export const loadResultsFromDataFolder = async () => {
   const [analysisResults] = await loadStateFromDataFolder();
   if (analysisResults) {
-    vscode.commands.executeCommand("konveyor.loadRuleSets", analysisResults);
+    vscode.commands.executeCommand("aksmigrate.loadRuleSets", analysisResults);
   }
 };

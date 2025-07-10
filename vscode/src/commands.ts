@@ -73,7 +73,7 @@ const commandsMap: (state: ExtensionState) => {
   [command: string]: (...args: any) => any;
 } = (state) => {
   return {
-    "konveyor.openProfilesPanel": async () => {
+    "aksmigrate.openProfilesPanel": async () => {
       const provider = state.webviewProviders.get("profiles");
       if (provider) {
         provider.showWebviewPanel();
@@ -81,7 +81,7 @@ const commandsMap: (state: ExtensionState) => {
         console.error("Profiles provider not found");
       }
     },
-    "konveyor.startServer": async () => {
+    "aksmigrate.startServer": async () => {
       const analyzerClient = state.analyzerClient;
       if (!(await analyzerClient.canAnalyzeInteractive())) {
         return;
@@ -104,7 +104,7 @@ const commandsMap: (state: ExtensionState) => {
         });
       }
     },
-    "konveyor.stopServer": async () => {
+    "aksmigrate.stopServer": async () => {
       const analyzerClient = state.analyzerClient;
       try {
         await analyzerClient.stop();
@@ -112,7 +112,7 @@ const commandsMap: (state: ExtensionState) => {
         console.error("Could not shutdown and stop the server", e);
       }
     },
-    "konveyor.restartServer": async () => {
+    "aksmigrate.restartServer": async () => {
       const analyzerClient = state.analyzerClient;
       try {
         if (analyzerClient.isServerRunning()) {
@@ -127,7 +127,7 @@ const commandsMap: (state: ExtensionState) => {
         console.error("Could not restart the server", e);
       }
     },
-    "konveyor.runAnalysis": async () => {
+    "aksmigrate.runAnalysis": async () => {
       console.log("run analysis command called");
       const analyzerClient = state.analyzerClient;
       if (!analyzerClient || !analyzerClient.canAnalyze()) {
@@ -136,8 +136,11 @@ const commandsMap: (state: ExtensionState) => {
       }
       analyzerClient.runAnalysis();
     },
-    "konveyor.getSolution": async (incidents: EnhancedIncident[], effort: SolutionEffortLevel) => {
-      await commands.executeCommand("konveyor.showResolutionPanel");
+    "aksmigrate.getSolution": async (
+      incidents: EnhancedIncident[],
+      effort: SolutionEffortLevel,
+    ) => {
+      await commands.executeCommand("aksmigrate.showResolutionPanel");
       // Create a scope for the solution
       const scope: Scope = { incidents, effort };
       const clientId = uuidv4();
@@ -387,7 +390,7 @@ const commandsMap: (state: ExtensionState) => {
         });
 
         // Load the solution
-        commands.executeCommand("konveyor.loadSolution", solutionResponse, { incidents });
+        commands.executeCommand("aksmigrate.loadSolution", solutionResponse, { incidents });
       } catch (error: any) {
         console.error("Error in getSolution:", error);
 
@@ -406,7 +409,7 @@ const commandsMap: (state: ExtensionState) => {
         window.showErrorMessage(`Failed to generate solution: ${error.message}`);
       }
     },
-    "konveyor.askContinue": async (incident: EnhancedIncident) => {
+    "aksmigrate.askContinue": async (incident: EnhancedIncident) => {
       // This should be a redundant check as we shouldn't render buttons that
       // map to this command when continue is not installed.
       if (!state.data.isContinueInstalled) {
@@ -433,7 +436,7 @@ const commandsMap: (state: ExtensionState) => {
         // Execute the Continue command with prompt and range
         await commands.executeCommand(
           "continue.customQuickActionSendToChat",
-          `Help me address this Konveyor migration issue:\nRule: ${incident.ruleset_name} - ${incident.ruleset_description}\nViolation: ${incident.violation_name} - ${incident.violation_description}\nCategory: ${incident.violation_category}\nMessage: ${incident.message}`,
+          `Help me address this AKS Migrate migration issue:\nRule: ${incident.ruleset_name} - ${incident.ruleset_description}\nViolation: ${incident.violation_name} - ${incident.violation_description}\nCategory: ${incident.violation_category}\nMessage: ${incident.message}`,
           new Range(
             new Position(startLine, 0),
             new Position(endLine, doc.lineAt(endLine).text.length),
@@ -446,7 +449,7 @@ const commandsMap: (state: ExtensionState) => {
         );
       }
     },
-    "konveyor.overrideAnalyzerBinaries": async () => {
+    "aksmigrate.overrideAnalyzerBinaries": async () => {
       const options: OpenDialogOptions = {
         canSelectMany: false,
         openLabel: "Select Analyzer Binary",
@@ -482,7 +485,7 @@ const commandsMap: (state: ExtensionState) => {
         window.showInformationMessage("No analyzer binary selected.");
       }
     },
-    "konveyor.overrideKaiRpcServerBinaries": async () => {
+    "aksmigrate.overrideKaiRpcServerBinaries": async () => {
       const options: OpenDialogOptions = {
         canSelectMany: false,
         openLabel: "Select Rpc Server Binary",
@@ -518,57 +521,57 @@ const commandsMap: (state: ExtensionState) => {
         window.showInformationMessage("No Kai rpc-server binary selected.");
       }
     },
-    "konveyor.modelProviderSettingsOpen": async () => {
+    "aksmigrate.modelProviderSettingsOpen": async () => {
       const settingsDocument = await workspace.openTextDocument(paths().settingsYaml);
       window.showTextDocument(settingsDocument);
     },
-    "konveyor.modelProviderSettingsBackupReset": async () => {
+    "aksmigrate.modelProviderSettingsBackupReset": async () => {
       await copySampleProviderSettings(true);
       const settingsDocument = await workspace.openTextDocument(paths().settingsYaml);
       window.showTextDocument(settingsDocument);
     },
-    "konveyor.configureCustomRules": async (profileId: string) => {
+    "aksmigrate.configureCustomRules": async (profileId: string) => {
       await handleConfigureCustomRules(profileId, state);
     },
-    "konveyor.loadRuleSets": async (ruleSets: RuleSet[]) => loadRuleSets(state, ruleSets),
-    "konveyor.cleanRuleSets": () => cleanRuleSets(state),
-    "konveyor.loadStaticResults": loadStaticResults,
-    "konveyor.loadResultsFromDataFolder": loadResultsFromDataFolder,
-    "konveyor.loadSolution": async (solution: Solution, scope?: Scope) =>
+    "aksmigrate.loadRuleSets": async (ruleSets: RuleSet[]) => loadRuleSets(state, ruleSets),
+    "aksmigrate.cleanRuleSets": () => cleanRuleSets(state),
+    "aksmigrate.loadStaticResults": loadStaticResults,
+    "aksmigrate.loadResultsFromDataFolder": loadResultsFromDataFolder,
+    "aksmigrate.loadSolution": async (solution: Solution, scope?: Scope) =>
       loadSolution(state, solution, scope),
-    "konveyor.applyAll": async () => applyAll(state),
-    "konveyor.applyFile": async (item: FileItem | Uri) => applyFile(item, state),
-    "konveyor.copyDiff": async (item: FileItem | Uri) => copyDiff(item, state),
-    "konveyor.copyPath": copyPath,
-    "konveyor.diffView.viewFix": viewFix,
-    "konveyor.discardAll": async () => discardAll(state),
-    "konveyor.discardFile": async (item: FileItem | Uri) => discardFile(item, state),
-    "konveyor.showResolutionPanel": () => {
+    "aksmigrate.applyAll": async () => applyAll(state),
+    "aksmigrate.applyFile": async (item: FileItem | Uri) => applyFile(item, state),
+    "aksmigrate.copyDiff": async (item: FileItem | Uri) => copyDiff(item, state),
+    "aksmigrate.copyPath": copyPath,
+    "aksmigrate.diffView.viewFix": viewFix,
+    "aksmigrate.discardAll": async () => discardAll(state),
+    "aksmigrate.discardFile": async (item: FileItem | Uri) => discardFile(item, state),
+    "aksmigrate.showResolutionPanel": () => {
       const resolutionProvider = state.webviewProviders?.get("resolution");
       resolutionProvider?.showWebviewPanel();
     },
-    "konveyor.showAnalysisPanel": () => {
+    "aksmigrate.showAnalysisPanel": () => {
       const resolutionProvider = state.webviewProviders?.get("sidebar");
       resolutionProvider?.showWebviewPanel();
     },
-    "konveyor.closeWizard": () => {
+    "aksmigrate.closeWizard": () => {
       const sidebarProvider = state.webviewProviders?.get("sidebar");
       sidebarProvider?.closeWebviewPanel();
     },
-    "konveyor.openAnalysisDetails": async (item: IncidentTypeItem) => {
+    "aksmigrate.openAnalysisDetails": async (item: IncidentTypeItem) => {
       //TODO: pass the item to webview and move the focus
       console.log("Open details for ", item);
       const resolutionProvider = state.webviewProviders?.get("sidebar");
       resolutionProvider?.showWebviewPanel();
     },
-    "konveyor.fixGroupOfIncidents": fixGroupOfIncidents,
-    "konveyor.fixIncident": fixGroupOfIncidents,
-    "konveyor.diffView.applyBlock": applyBlock,
-    "konveyor.diffView.applyBlockInline": applyBlock,
-    "konveyor.diffView.applySelection": applyBlock,
-    "konveyor.diffView.applySelectionInline": applyBlock,
-    "konveyor.partialAnalysis": async (filePaths: Uri[]) => runPartialAnalysis(state, filePaths),
-    "konveyor.configureGetSolutionParams": async () => {
+    "aksmigrate.fixGroupOfIncidents": fixGroupOfIncidents,
+    "aksmigrate.fixIncident": fixGroupOfIncidents,
+    "aksmigrate.diffView.applyBlock": applyBlock,
+    "aksmigrate.diffView.applyBlockInline": applyBlock,
+    "aksmigrate.diffView.applySelection": applyBlock,
+    "aksmigrate.diffView.applySelectionInline": applyBlock,
+    "aksmigrate.partialAnalysis": async (filePaths: Uri[]) => runPartialAnalysis(state, filePaths),
+    "aksmigrate.configureGetSolutionParams": async () => {
       const maxPriorityInput = await window.showInputBox({
         prompt: "Enter max_priority for getSolution",
         placeHolder: "0",
@@ -632,7 +635,7 @@ export function registerAllCommands(state: ExtensionState) {
     const errorMessage = `Failed to create command map: ${error instanceof Error ? error.message : String(error)}`;
     console.error(errorMessage, error);
     window.showErrorMessage(
-      `Konveyor extension failed to initialize commands. The extension cannot function properly.`,
+      `AKS Migrate extension failed to initialize commands. The extension cannot function properly.`,
     );
     throw new Error(errorMessage);
   }
@@ -643,7 +646,7 @@ export function registerAllCommands(state: ExtensionState) {
     const errorMessage = `Command map is empty - no commands available to register`;
     console.error(errorMessage);
     window.showErrorMessage(
-      `Konveyor extension has no commands to register. The extension cannot function properly.`,
+      `AKS Migrate extension has no commands to register. The extension cannot function properly.`,
     );
     throw new Error(errorMessage);
   }

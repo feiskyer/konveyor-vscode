@@ -2,18 +2,18 @@
   "name": "editor-extensions",
   "version": "0.1.0",
   "private": true,
-  "displayName": "Konveyor",
-  "description": "VSCode Extension for Konveyor to assist in migrating and modernizing applications.",
+  "displayName": "AKS Migrate",
+  "description": "VSCode Extension for AKS Migrate to assist in migrating and modernizing applications to Azure Kubernetes Service.",
   "license": "Apache-2.0",
-  "publisher": "Konveyor",
-  "author": "Konveyor",
-  "icon": "vscode/resources/konveyor-icon-color.png",
-  "homepage": "https://github.com/konveyor/editor-extensions/blob/main/README.md",
+  "publisher": "Azure",
+  "author": "Azure",
+  "icon": "vscode/resources/aks-migrate-icon-color.png",
+  "homepage": "https://github.com/azure/aks-migrate/blob/main/README.md",
   "repository": {
     "type": "git",
-    "url": "https://github.com/konveyor/editor-extensions"
+    "url": "https://github.com/azure/aks-migrate"
   },
-  "bugs": "https://github.com/konveyor/editor-extensions/issues",
+  "bugs": "https://github.com/azure/aks-migrate/issues",
   "engines": {
     "vscode": "^1.93.0",
     "node": ">=22.9.0",

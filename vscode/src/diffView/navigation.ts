@@ -38,8 +38,8 @@ export class Navigation {
     private _delegate: FileItemNavigation<unknown>,
   ) {
     this._disposables.push(
-      vscode.commands.registerCommand("konveyor.diffView.next", () => this.next(false)),
-      vscode.commands.registerCommand("konveyor.diffView.prev", () => this.previous(false)),
+      vscode.commands.registerCommand("aksmigrate.diffView.next", () => this.next(false)),
+      vscode.commands.registerCommand("aksmigrate.diffView.prev", () => this.previous(false)),
     );
   }
 
@@ -56,7 +56,7 @@ export class Navigation {
   }
 
   private _open(loc: vscode.Location, preserveFocus: boolean) {
-    vscode.commands.executeCommand("konveyor.diffView.viewFix", loc.uri, preserveFocus);
+    vscode.commands.executeCommand("aksmigrate.diffView.viewFix", loc.uri, preserveFocus);
   }
 
   previous(preserveFocus: boolean): void {

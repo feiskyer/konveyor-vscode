@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { ExtensionState } from "src/extensionState";
-import { fromRelativeToKonveyor, KONVEYOR_READ_ONLY_SCHEME } from "../utilities";
+import { fromRelativeToAksMigrate, AKS_MIGRATE_READ_ONLY_SCHEME } from "../utilities";
 import { FileItem, toUri } from "./fileModel";
 import { LocalChange } from "@editor-extensions/shared";
 import { Immutable } from "immer";
@@ -32,12 +32,12 @@ export const viewFix = async (uri: vscode.Uri, preserveFocus: boolean) =>
     : viewFixInDiffEditor(uri, preserveFocus);
 
 export const viewFixInMergeEditor = async (uri: vscode.Uri, preserveFocus: boolean = false) => {
-  const readOnlyUri = vscode.Uri.from({ ...uri, scheme: KONVEYOR_READ_ONLY_SCHEME });
+  const readOnlyUri = vscode.Uri.from({ ...uri, scheme: AKS_MIGRATE_READ_ONLY_SCHEME });
   const options = {
     base: readOnlyUri,
     input1: { uri: readOnlyUri, title: "Current" },
     input2: {
-      uri: fromRelativeToKonveyor(vscode.workspace.asRelativePath(uri)),
+      uri: fromRelativeToAksMigrate(vscode.workspace.asRelativePath(uri)),
       title: "Suggested",
     },
     output: uri,
@@ -51,7 +51,7 @@ export const viewFixInDiffEditor = async (uri: vscode.Uri, preserveFocus: boolea
   vscode.commands.executeCommand(
     "vscode.diff",
     uri,
-    fromRelativeToKonveyor(vscode.workspace.asRelativePath(uri)),
+    fromRelativeToAksMigrate(vscode.workspace.asRelativePath(uri)),
     "Current ↔ Suggested",
     {
       preserveFocus,

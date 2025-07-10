@@ -172,7 +172,7 @@ export const WizardContainer: React.FC = () => {
       <div className="wizard-header">
         <div className="wizard-header-content">
           <Title headingLevel="h1" size="xl" className="wizard-title">
-            Konveyor Migration Wizard
+            AKS Migrate Migration Wizard
           </Title>
           {renderStepIndicator()}
         </div>

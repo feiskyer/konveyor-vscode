@@ -125,7 +125,7 @@ export const writeProjectProfiles = async (profiles: AnalysisProfile[]): Promise
 };
 
 /**
- * Ensure the .konveyor directory exists and create it if it doesn't.
+ * Ensure the .aksmigrate directory exists and create it if it doesn't.
  */
 export const ensureProjectConfigDirectory = async (): Promise<void> => {
   try {

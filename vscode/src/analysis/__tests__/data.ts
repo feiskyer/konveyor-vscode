@@ -26,7 +26,7 @@ export const FOO: RuleSet = {
     },
   },
   errors: {
-    "foo-02": "unable to ask for Konveyor rule entry",
+    "foo-02": "unable to ask for AKS Migrate rule entry",
     "foo-03": "could not run grep with provided pattern exit status 2",
   },
   unmatched: ["foo-04", "foo-05"],

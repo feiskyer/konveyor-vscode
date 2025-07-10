@@ -167,10 +167,10 @@ export class IssuesModel {
 
   fix(incidentMessage: string, incidents: Incident[]) {
     const firstViolation: Immutable<Violation> | undefined = this.findViolation(incidentMessage);
-    vscode.commands.executeCommand("konveyor.getSolution", incidents, firstViolation);
+    vscode.commands.executeCommand("aksmigrate.getSolution", incidents, firstViolation);
 
-    vscode.commands.executeCommand("konveyor.diffView.focus");
-    vscode.commands.executeCommand("konveyor.showResolutionPanel");
+    vscode.commands.executeCommand("aksmigrate.diffView.focus");
+    vscode.commands.executeCommand("aksmigrate.showResolutionPanel");
   }
 }
 

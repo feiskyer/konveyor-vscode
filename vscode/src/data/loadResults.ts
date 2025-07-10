@@ -12,7 +12,7 @@ import { ExtensionState } from "src/extensionState";
 import { writeDataFile } from "./storage";
 import { toLocalChanges, writeSolutionsToMemFs } from "./virtualStorage";
 import {
-  KONVEYOR_SCHEME,
+  AKS_MIGRATE_SCHEME,
   RULE_SET_DATA_FILE_PREFIX,
   SOLUTION_DATA_FILE_PREFIX,
 } from "../utilities";
@@ -58,7 +58,7 @@ const doLoadSolution = async (
   solution?: Immutable<Solution>,
   scope?: Immutable<Scope>,
 ) => {
-  state.memFs.removeAll(KONVEYOR_SCHEME);
+  state.memFs.removeAll(AKS_MIGRATE_SCHEME);
   await writeSolutionsToMemFs(localChanges, state);
   state.mutateData((draft) => {
     draft.localChanges = localChanges;

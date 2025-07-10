@@ -3,7 +3,7 @@ import * as yaml from "js-yaml";
 import * as fs from "fs";
 import deepEqual from "fast-deep-equal";
 import { ServerLogLevels } from "../client/types";
-import { KONVEYOR_CONFIG_KEY } from "./constants";
+import { AKS_MIGRATE_CONFIG_KEY } from "./constants";
 import { ExtensionState } from "../extensionState";
 import {
   AnalysisProfile,
@@ -16,7 +16,7 @@ import {
 } from "@editor-extensions/shared";
 
 function getConfigValue<T>(key: string): T | undefined {
-  return vscode.workspace.getConfiguration(KONVEYOR_CONFIG_KEY)?.get<T>(key);
+  return vscode.workspace.getConfiguration(AKS_MIGRATE_CONFIG_KEY)?.get<T>(key);
 }
 
 async function updateConfigValue<T>(
@@ -24,7 +24,7 @@ async function updateConfigValue<T>(
   value: T | undefined,
   scope: vscode.ConfigurationTarget = vscode.ConfigurationTarget.Workspace,
 ): Promise<void> {
-  await vscode.workspace.getConfiguration(KONVEYOR_CONFIG_KEY).update(key, value, scope);
+  await vscode.workspace.getConfiguration(AKS_MIGRATE_CONFIG_KEY).update(key, value, scope);
 }
 
 export const getConfigAnalyzerPath = (): string => getConfigValue<string>("analyzerPath") || "";
@@ -282,9 +282,9 @@ export const registerConfigChangeListener = (
 ): vscode.Disposable => {
   return vscode.workspace.onDidChangeConfiguration((event) => {
     if (
-      event.affectsConfiguration("konveyor.kai.getSolutionMaxEffort") ||
-      event.affectsConfiguration("konveyor.kai.getSolutionMaxLLMQueries") ||
-      event.affectsConfiguration("konveyor.kai.getSolutionMaxPriority")
+      event.affectsConfiguration("aksmigrate.kai.getSolutionMaxEffort") ||
+      event.affectsConfiguration("aksmigrate.kai.getSolutionMaxLLMQueries") ||
+      event.affectsConfiguration("aksmigrate.kai.getSolutionMaxPriority")
     ) {
       state.mutateData((draft) => {
         draft.solutionEffort = getConfigSolutionMaxEffortLevel();

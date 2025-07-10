@@ -10,7 +10,7 @@ import {
   DELETE_PROFILE,
   DISCARD_FILE,
   GET_SOLUTION,
-  GET_SOLUTION_WITH_KONVEYOR_CONTEXT,
+  GET_SOLUTION_WITH_AKS_MIGRATE_CONTEXT,
   LocalChange,
   OPEN_FILE,
   OPEN_GENAI_SETTINGS,
@@ -32,7 +32,7 @@ import {
   WizardStep,
   WebviewAction,
   WebviewActionType,
-  ScopeWithKonveyorContext,
+  ScopeWithAksMigrateContext,
   ExtensionData,
 } from "@editor-extensions/shared";
 
@@ -135,47 +135,51 @@ const actions: {
   },
 
   [OPEN_PROFILE_MANAGER]() {
-    vscode.commands.executeCommand("konveyor.openProfilesPanel");
+    vscode.commands.executeCommand("aksmigrate.openProfilesPanel");
   },
   [WEBVIEW_READY]() {
     console.log("Webview is ready");
   },
   [CONFIGURE_SOURCES_TARGETS]() {
-    vscode.commands.executeCommand("konveyor.configureSourcesTargets");
+    vscode.commands.executeCommand("aksmigrate.configureSourcesTargets");
   },
   [CONFIGURE_LABEL_SELECTOR]() {
-    vscode.commands.executeCommand("konveyor.configureLabelSelector");
+    vscode.commands.executeCommand("aksmigrate.configureLabelSelector");
   },
   [CONFIGURE_CUSTOM_RULES]: async ({ profileId }, state) => {
-    vscode.commands.executeCommand("konveyor.configureCustomRules", profileId, state);
+    vscode.commands.executeCommand("aksmigrate.configureCustomRules", profileId, state);
   },
 
   [OVERRIDE_ANALYZER_BINARIES]() {
-    vscode.commands.executeCommand("konveyor.overrideAnalyzerBinaries");
+    vscode.commands.executeCommand("aksmigrate.overrideAnalyzerBinaries");
   },
   [OVERRIDE_RPC_SERVER_BINARIES]() {
-    vscode.commands.executeCommand("konveyor.overrideKaiRpcServerBinaries");
+    vscode.commands.executeCommand("aksmigrate.overrideKaiRpcServerBinaries");
   },
   [OPEN_GENAI_SETTINGS]() {
-    vscode.commands.executeCommand("konveyor.modelProviderSettingsOpen");
+    vscode.commands.executeCommand("aksmigrate.modelProviderSettingsOpen");
   },
   [GET_SOLUTION](scope: Scope) {
-    vscode.commands.executeCommand("konveyor.getSolution", scope.incidents, scope.effort);
-    vscode.commands.executeCommand("konveyor.diffView.focus");
-    vscode.commands.executeCommand("konveyor.showResolutionPanel");
+    vscode.commands.executeCommand("aksmigrate.getSolution", scope.incidents, scope.effort);
+    vscode.commands.executeCommand("aksmigrate.diffView.focus");
+    vscode.commands.executeCommand("aksmigrate.showResolutionPanel");
   },
-  async [GET_SOLUTION_WITH_KONVEYOR_CONTEXT]({ incident }: ScopeWithKonveyorContext) {
-    vscode.commands.executeCommand("konveyor.askContinue", incident);
+  async [GET_SOLUTION_WITH_AKS_MIGRATE_CONTEXT]({ incident }: ScopeWithAksMigrateContext) {
+    vscode.commands.executeCommand("aksmigrate.askContinue", incident);
   },
   [VIEW_FIX](change: LocalChange) {
     vscode.commands.executeCommand(
-      "konveyor.diffView.viewFix",
+      "aksmigrate.diffView.viewFix",
       vscode.Uri.from(change.originalUri),
       true,
     );
   },
   [APPLY_FILE](change: LocalChange, state) {
-    vscode.commands.executeCommand("konveyor.applyFile", vscode.Uri.from(change.originalUri), true);
+    vscode.commands.executeCommand(
+      "aksmigrate.applyFile",
+      vscode.Uri.from(change.originalUri),
+      true,
+    );
 
     // Update wizard state to mark that solutions have been applied
     state.mutateData((draft) => {
@@ -184,13 +188,13 @@ const actions: {
   },
   [DISCARD_FILE](change: LocalChange) {
     vscode.commands.executeCommand(
-      "konveyor.discardFile",
+      "aksmigrate.discardFile",
       vscode.Uri.from(change.originalUri),
       true,
     );
   },
   [RUN_ANALYSIS]() {
-    vscode.commands.executeCommand("konveyor.runAnalysis");
+    vscode.commands.executeCommand("aksmigrate.runAnalysis");
   },
   async [OPEN_FILE]({ file, line }) {
     const fileUri = vscode.Uri.parse(file);
@@ -206,10 +210,10 @@ const actions: {
     }
   },
   [START_SERVER]() {
-    vscode.commands.executeCommand("konveyor.startServer");
+    vscode.commands.executeCommand("aksmigrate.startServer");
   },
   [STOP_SERVER]() {
-    vscode.commands.executeCommand("konveyor.stopServer");
+    vscode.commands.executeCommand("aksmigrate.stopServer");
   },
 
   [WIZARD_NEXT_STEP]: (_, state) => {
@@ -236,7 +240,7 @@ const actions: {
       } else {
         // On final step, finish the wizard - reset all state
         resetWizardState(draft);
-        vscode.commands.executeCommand("konveyor.closeWizard");
+        vscode.commands.executeCommand("aksmigrate.closeWizard");
       }
     });
   },
@@ -277,7 +281,7 @@ const actions: {
       resetWizardState(draft);
     });
     // Close the wizard webview
-    vscode.commands.executeCommand("konveyor.closeWizard");
+    vscode.commands.executeCommand("aksmigrate.closeWizard");
   },
 };
 

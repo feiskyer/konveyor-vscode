@@ -1,6 +1,6 @@
 import { Uri } from "vscode";
-import { KONVEYOR_SCHEME } from "./constants";
+import { AKS_MIGRATE_SCHEME } from "./constants";
 import path from "path";
 
-export const fromRelativeToKonveyor = (relativePath: string) =>
-  Uri.from({ scheme: KONVEYOR_SCHEME, path: path.posix.sep + relativePath });
+export const fromRelativeToAksMigrate = (relativePath: string) =>
+  Uri.from({ scheme: AKS_MIGRATE_SCHEME, path: path.posix.sep + relativePath });

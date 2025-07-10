@@ -3,7 +3,7 @@ import {
   ExtensionData,
   LocalChange,
   Scope,
-  ScopeWithKonveyorContext,
+  ScopeWithAksMigrateContext,
   SolutionEffortLevel,
   WebviewAction,
   WebviewActionType,
@@ -44,10 +44,10 @@ export const getSolution = (
   payload: { incidents, effort },
 });
 
-export const getSolutionWithKonveyorContext = (
+export const getSolutionWithAksMigrateContext = (
   incident: EnhancedIncident,
-): WebviewAction<WebviewActionType, ScopeWithKonveyorContext> => ({
-  type: "GET_SOLUTION_WITH_KONVEYOR_CONTEXT",
+): WebviewAction<WebviewActionType, ScopeWithAksMigrateContext> => ({
+  type: "GET_SOLUTION_WITH_AKS_MIGRATE_CONTEXT",
   payload: { incident },
 });
 

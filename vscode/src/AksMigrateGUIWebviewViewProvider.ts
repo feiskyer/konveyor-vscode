@@ -20,12 +20,12 @@ import jsesc from "jsesc";
 
 const DEV_SERVER_ROOT = "http://localhost:5173/out/webview";
 
-export class KonveyorGUIWebviewViewProvider implements WebviewViewProvider {
-  public static readonly SIDEBAR_VIEW_TYPE = "konveyor.konveyorAnalysisView";
-  public static readonly RESOLUTION_VIEW_TYPE = "konveyor.konveyorResolutionView";
-  public static readonly PROFILES_VIEW_TYPE = "konveyor.konveyorProfilesView";
+export class AksMigrateGUIWebviewViewProvider implements WebviewViewProvider {
+  public static readonly SIDEBAR_VIEW_TYPE = "aksmigrate.konveyorAnalysisView";
+  public static readonly RESOLUTION_VIEW_TYPE = "aksmigrate.konveyorResolutionView";
+  public static readonly PROFILES_VIEW_TYPE = "aksmigrate.konveyorProfilesView";
 
-  private static instance: KonveyorGUIWebviewViewProvider;
+  private static instance: AksMigrateGUIWebviewViewProvider;
   private _disposables: Disposable[] = [];
   private _panel?: WebviewPanel;
   private _view?: WebviewView;
@@ -59,22 +59,22 @@ export class KonveyorGUIWebviewViewProvider implements WebviewViewProvider {
       switch (this._viewType) {
         case "sidebar":
           return {
-            viewType: KonveyorGUIWebviewViewProvider.SIDEBAR_VIEW_TYPE,
-            title: "Konveyor Analysis View",
+            viewType: AksMigrateGUIWebviewViewProvider.SIDEBAR_VIEW_TYPE,
+            title: "AKS Migrate Analysis View",
           };
         case "wizard":
           return {
-            viewType: KonveyorGUIWebviewViewProvider.SIDEBAR_VIEW_TYPE,
-            title: "Konveyor Migration Wizard",
+            viewType: AksMigrateGUIWebviewViewProvider.SIDEBAR_VIEW_TYPE,
+            title: "AKS Migrate Migration Wizard",
           };
         case "resolution":
           return {
-            viewType: KonveyorGUIWebviewViewProvider.RESOLUTION_VIEW_TYPE,
+            viewType: AksMigrateGUIWebviewViewProvider.RESOLUTION_VIEW_TYPE,
             title: "Resolution Details",
           };
         case "profiles":
           return {
-            viewType: KonveyorGUIWebviewViewProvider.PROFILES_VIEW_TYPE,
+            viewType: AksMigrateGUIWebviewViewProvider.PROFILES_VIEW_TYPE,
             title: "Manage Profiles",
           };
         default:
@@ -165,12 +165,12 @@ export class KonveyorGUIWebviewViewProvider implements WebviewViewProvider {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="Content-Security-Policy" content="${this._getContentSecurityPolicy(nonce, webview)}">
         <link rel="stylesheet" type="text/css" href="${stylesUri}">
-        <title>Konveyor IDE Extension</title>
+        <title>AKS Migrate IDE Extension</title>
         <script nonce="${nonce}">
           const vscode = acquireVsCodeApi();
           window.vscode = vscode;
           window.viewType = "${this._viewType}";
-          window.konveyorInitialData = ${jsesc(data, { json: true, isScriptContext: true })};
+          window.aksMigrateInitialData = ${jsesc(data, { json: true, isScriptContext: true })};
         </script>
       </head>
       <body>
@@ -293,7 +293,7 @@ export class KonveyorGUIWebviewViewProvider implements WebviewViewProvider {
   private sendMessage(message: any, webview: Webview) {
     webview.postMessage(message).then((deliveryStatus) => {
       if (!deliveryStatus) {
-        console.error(`Message to Konveyor webview '${this._viewType}' not delivered`);
+        console.error(`Message to AKS Migrate webview '${this._viewType}' not delivered`);
       }
     });
   }

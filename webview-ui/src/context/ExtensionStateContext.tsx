@@ -53,8 +53,8 @@ const defaultState: ExtensionData = {
 };
 
 const windowState =
-  typeof window["konveyorInitialData"] === "object"
-    ? (window["konveyorInitialData"] as ExtensionData)
+  typeof window["aksMigrateInitialData"] === "object"
+    ? (window["aksMigrateInitialData"] as ExtensionData)
     : defaultState;
 
 type ExtensionStateContextType = {

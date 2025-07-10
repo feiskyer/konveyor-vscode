@@ -146,7 +146,7 @@ export interface Scope {
   effort: SolutionEffortLevel;
 }
 
-export interface ScopeWithKonveyorContext {
+export interface ScopeWithAksMigrateContext {
   incident: EnhancedIncident;
 }
 
@@ -216,7 +216,7 @@ export type SolutionState =
   | "failedOnStart"
   | "failedOnSending";
 
-export const DiagnosticSource = "konveyor";
+export const DiagnosticSource = "aksmigrate";
 
 export interface GenAIModelConfig {
   args?: {

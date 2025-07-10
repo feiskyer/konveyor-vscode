@@ -1,9 +1,13 @@
 import * as vscode from "vscode";
-import { KonveyorTreeDataProvider } from "./fileModel";
+import { AksMigrateTreeDataProvider } from "./fileModel";
 import { Navigation } from "./navigation";
 import { ExtensionState } from "src/extensionState";
-import { getConfigAnalyzeOnSave, KONVEYOR_READ_ONLY_SCHEME, KONVEYOR_SCHEME } from "../utilities";
-import KonveyorReadOnlyProvider from "../data/readOnlyStorage";
+import {
+  getConfigAnalyzeOnSave,
+  AKS_MIGRATE_READ_ONLY_SCHEME,
+  AKS_MIGRATE_SCHEME,
+} from "../utilities";
+import AksMigrateReadOnlyProvider from "../data/readOnlyStorage";
 import { Immutable } from "immer";
 import { LocalChange, ExtensionData } from "@editor-extensions/shared";
 
@@ -13,14 +17,14 @@ export function registerDiffView({
   fileModel: model,
 }: ExtensionState): (data: Immutable<ExtensionData>) => void {
   context.subscriptions.push(
-    vscode.workspace.registerFileSystemProvider(KONVEYOR_SCHEME, memFs, {
+    vscode.workspace.registerFileSystemProvider(AKS_MIGRATE_SCHEME, memFs, {
       isCaseSensitive: true,
     }),
   );
 
-  const provider = new KonveyorTreeDataProvider(model);
-  vscode.window.registerTreeDataProvider("konveyor.diffView", provider);
-  const treeView = vscode.window.createTreeView<unknown>("konveyor.diffView", {
+  const provider = new AksMigrateTreeDataProvider(model);
+  vscode.window.registerTreeDataProvider("aksmigrate.diffView", provider);
+  const treeView = vscode.window.createTreeView<unknown>("aksmigrate.diffView", {
     treeDataProvider: provider,
     showCollapseAll: true,
   });
@@ -33,11 +37,11 @@ export function registerDiffView({
     treeView.message = model.message;
   });
 
-  const readOnlyProvider = new KonveyorReadOnlyProvider();
+  const readOnlyProvider = new AksMigrateReadOnlyProvider();
 
   context.subscriptions.push(
     vscode.workspace.registerTextDocumentContentProvider(
-      KONVEYOR_READ_ONLY_SCHEME,
+      AKS_MIGRATE_READ_ONLY_SCHEME,
       readOnlyProvider,
     ),
   );
@@ -76,7 +80,7 @@ export function registerDiffView({
 
     const appliedPaths = allModifiedPaths.filter(Boolean).filter((uri) => uri?.scheme === "file");
     if (appliedPaths.length && getConfigAnalyzeOnSave()) {
-      return vscode.commands.executeCommand("konveyor.partialAnalysis", appliedPaths);
+      return vscode.commands.executeCommand("aksmigrate.partialAnalysis", appliedPaths);
     }
   };
 }

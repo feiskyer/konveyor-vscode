@@ -266,7 +266,7 @@ export const ProfileEditorForm: React.FC<{
         <FormHelperText>
           <HelperText>
             <HelperTextItem icon={<InfoCircleIcon />}>
-              Include Konveyor&apos;s built-in migration rules
+              Include AKS Migrate&apos;s built-in migration rules
             </HelperTextItem>
           </HelperText>
         </FormHelperText>

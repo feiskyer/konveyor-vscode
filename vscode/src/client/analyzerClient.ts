@@ -47,7 +47,7 @@ export class AnalyzerClient {
     this.assetPaths = buildAssetPaths(extContext);
     this.taskManager = taskManager;
 
-    this.outputChannel = vscode.window.createOutputChannel("Konveyor-Analyzer");
+    this.outputChannel = vscode.window.createOutputChannel("AKS-Migrate-Analyzer");
     this.outputChannel.appendLine(
       `current asset paths: ${JSON.stringify(this.assetPaths, null, 2)}`,
     );
@@ -438,7 +438,7 @@ export class AnalyzerClient {
             });
           }
 
-          await vscode.commands.executeCommand("konveyor.loadRuleSets", ruleSets);
+          await vscode.commands.executeCommand("aksmigrate.loadRuleSets", ruleSets);
           this.taskManager.init();
           progress.report({ message: "Results processed!" });
           vscode.window.showInformationMessage("Analysis completed successfully!");
@@ -476,7 +476,7 @@ export class AnalyzerClient {
       );
 
       if (selection === "Manage Profiles") {
-        await vscode.commands.executeCommand("konveyor.openProfileManager");
+        await vscode.commands.executeCommand("aksmigrate.openProfileManager");
       }
 
       return false;
@@ -490,7 +490,7 @@ export class AnalyzerClient {
       );
 
       if (selection === "Manage Profiles") {
-        await vscode.commands.executeCommand("konveyor.openProfileManager");
+        await vscode.commands.executeCommand("aksmigrate.openProfileManager");
       }
 
       return false;

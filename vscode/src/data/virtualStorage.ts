@@ -10,10 +10,10 @@ import * as Diff from "diff";
 import path from "path";
 
 import {
-  fromRelativeToKonveyor,
+  fromRelativeToAksMigrate,
   isGetSolutionResult,
   isSolutionResponse,
-  KONVEYOR_SCHEME,
+  AKS_MIGRATE_SCHEME,
 } from "../utilities";
 import { Immutable } from "immer";
 import { paths } from "../paths";
@@ -36,7 +36,7 @@ const toLocalFromGetSolutionResult = (solution: GetSolutionResult): LocalChange[
     // drop add/delete/rename changes (no support as for now)
     .filter(({ modified, original }) => modified && original && modified === original)
     .map(({ modified, original, diff }) => ({
-      modifiedUri: fromRelativeToKonveyor(modified),
+      modifiedUri: fromRelativeToAksMigrate(modified),
       originalUri: Uri.file(toAbsolutePathInsideWorkspace(original)),
       diff,
       state: "pending",
@@ -57,7 +57,7 @@ const toLocalFromSolutionResponse = (solution: SolutionResponse): LocalChange[] 
         oldFileName.substring(2) === newFileName.substring(2),
     )
     .map((structuredPatch) => ({
-      modifiedUri: fromRelativeToKonveyor(structuredPatch.oldFileName!.substring(2)),
+      modifiedUri: fromRelativeToAksMigrate(structuredPatch.oldFileName!.substring(2)),
       originalUri: Uri.file(
         toAbsolutePathInsideWorkspace(structuredPatch.oldFileName!.substring(2)),
       ),
@@ -74,7 +74,7 @@ export const writeSolutionsToMemFs = async (
 
   // create all the dirs synchronously
   localChanges.forEach(({ modifiedUri }) =>
-    memFs.createDirectoriesIfNeeded(modifiedUri, KONVEYOR_SCHEME),
+    memFs.createDirectoriesIfNeeded(modifiedUri, AKS_MIGRATE_SCHEME),
   );
 
   const writeDiff = async ({ diff, originalUri, modifiedUri }: LocalChange) => {

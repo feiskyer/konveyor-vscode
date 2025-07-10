@@ -10,9 +10,9 @@ export function registerIssueView({
   issueModel: model,
 }: ExtensionState): (data: Immutable<ExtensionData>) => void {
   const provider = new IssuesTreeDataProvider(model);
-  vscode.window.registerTreeDataProvider("konveyor.issueView", provider);
+  vscode.window.registerTreeDataProvider("aksmigrate.issueView", provider);
   const treeView = vscode.window.createTreeView<IncidentTypeItem | FileItem | ReferenceItem>(
-    "konveyor.issueView",
+    "aksmigrate.issueView",
     {
       treeDataProvider: provider,
       showCollapseAll: true,
@@ -34,9 +34,9 @@ export function registerIssueView({
     }
   });
 
-  vscode.commands.registerCommand("konveyor.expandAllIssues", () => expandAll(model, treeView));
+  vscode.commands.registerCommand("aksmigrate.expandAllIssues", () => expandAll(model, treeView));
   vscode.commands.registerCommand(
-    "konveyor.expandSingleIssue",
+    "aksmigrate.expandSingleIssue",
     (item: IncidentTypeItem | FileItem | ReferenceItem) => expandChildren(item, treeView),
   );
 
@@ -53,7 +53,7 @@ export function registerIssueView({
       firstLoad = false;
       // TODO: re-implement to be explicitly part of the extension lifecycle
       // current code relies on the side effects
-      vscode.commands.executeCommand("konveyor.showAnalysisPanel");
+      vscode.commands.executeCommand("aksmigrate.showAnalysisPanel");
     }
   };
 }

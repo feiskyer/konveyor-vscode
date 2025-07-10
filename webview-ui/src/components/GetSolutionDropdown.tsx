@@ -10,7 +10,7 @@ import {
 import { SolutionEffortLevel } from "@editor-extensions/shared";
 import { EnhancedIncident } from "@editor-extensions/shared";
 import { useExtensionStateContext } from "../context/ExtensionStateContext";
-import { getSolution, getSolutionWithKonveyorContext } from "../hooks/actions";
+import { getSolution, getSolutionWithAksMigrateContext } from "../hooks/actions";
 import { EllipsisVIcon, WrenchIcon } from "@patternfly/react-icons";
 
 type GetSolutionDropdownProps = {
@@ -30,8 +30,8 @@ const GetSolutionDropdown: React.FC<GetSolutionDropdownProps> = ({ incidents, sc
     dispatch(getSolution(incidents, effort));
   };
 
-  const onGetSolutionWithKonveyorContext = (incident: EnhancedIncident) => {
-    dispatch(getSolutionWithKonveyorContext(incident));
+  const onGetSolutionWithAksMigrateContext = (incident: EnhancedIncident) => {
+    dispatch(getSolutionWithAksMigrateContext(incident));
   };
 
   const isButtonDisabled =
@@ -90,9 +90,9 @@ const GetSolutionDropdown: React.FC<GetSolutionDropdownProps> = ({ incidents, sc
           {scope === "incident" && incidents.length === 1 && state.isContinueInstalled && (
             <DropdownItem
               key="ask-continue-konveyor"
-              onClick={() => onGetSolutionWithKonveyorContext(incidents[0])}
+              onClick={() => onGetSolutionWithAksMigrateContext(incidents[0])}
             >
-              Ask Continue with Konveyor Context
+              Ask Continue with AKS Migrate Context
             </DropdownItem>
           )}
         </DropdownGroup>

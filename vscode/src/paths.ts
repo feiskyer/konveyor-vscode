@@ -66,17 +66,17 @@ export async function ensurePaths(context: vscode.ExtensionContext): Promise<Ext
   const extResources = vscode.Uri.joinPath(context.extensionUri, "resources");
   const settingsYaml = vscode.Uri.joinPath(globalScope, "settings", "provider-settings.yaml");
 
-  const projectConfig = await ensureDirectory(firstWorkspace.uri, ".konveyor");
+  const projectConfig = await ensureDirectory(firstWorkspace.uri, ".aksmigrate");
   const projectProfiles = vscode.Uri.joinPath(projectConfig, "profiles.json");
 
   _paths = {
     extResources,
     workspaceRepo: firstWorkspace.uri,
-    data: await ensureDirectory(workspaceRepoScope, "konveyor"),
+    data: await ensureDirectory(workspaceRepoScope, "aksmigrate"),
     settings: await ensureDirectory(globalScope, "settings"),
     settingsYaml,
     serverCwd: await ensureDirectory(workspaceScope, "kai-rpc-server"),
-    serverLogs: await ensureDirectory(workspaceRepoScope, "konveyor-logs"),
+    serverLogs: await ensureDirectory(workspaceRepoScope, "aksmigrate-logs"),
     projectConfig,
     projectProfiles,
   };

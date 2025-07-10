@@ -1,9 +1,9 @@
-# Kai VS Code Extension (`kai-vscode`)
+# AKS Migrate VS Code Extension (`aks-migrate`)
 
-The Konveyor AI (Kai) VSCode Extension is a powerful tool for application
+The AKS Migrate VSCode Extension is a powerful tool for application
 modernization and migration analysis. It leverages cutting-edge AI to analyze
 code, identify modernization opportunities, and assist in migrating applications
-to newer platforms or architectures.
+to Azure Kubernetes Service (AKS).
 
 ---
 
@@ -20,8 +20,8 @@ to newer platforms or architectures.
 ## Installation
 
 1. Install [Visual Studio Code](https://code.visualstudio.com/).
-2. Search for `kai-vscode` in the Extensions Marketplace or [download it directly from GitHub Releases](https://github.com/konveyor/editor-extensions/releases).
-3. Follow the setup walkthrough to configure your environment. Alternatively, Command Palette, select "Welcome: Open Walkthrough", and select "Konveyor".
+2. Search for `aks-migrate` in the Extensions Marketplace or [download it directly from GitHub Releases](https://github.com/azure/aks-migrate/releases).
+3. Follow the setup walkthrough to configure your environment. Alternatively, Command Palette, select "Welcome: Open Walkthrough", and select "AKS Migrate".
 
 ---
 
@@ -32,13 +32,13 @@ to newer platforms or architectures.
 Set up your AI backend by providing a Generative AI configurations:
 
 1. Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`).
-2. Run `Konveyor: Open the GenAI model provider configuration file`.
+2. Run `AKS Migrate: Open the GenAI model provider configuration file`.
 
 ### Run an Analysis
 
-1. Start the server: `Konveyor: Start Server` and `Konveyor: Run Analysis`.
-2. Run an analysis on your code: `Konveyor: Run Analysis`.
-3. Open the Analysis View to view issues: `Konveyor: Open Konveyor Analysis View`.
+1. Start the server: `AKS Migrate: Start Server` and `AKS Migrate: Run Analysis`.
+2. Run an analysis on your code: `AKS Migrate: Run Analysis`.
+3. Open the Analysis View to view issues: `AKS Migrate: Open AKS Migrate Analysis View`.
 
 ### Get Solutions
 
@@ -55,11 +55,11 @@ and report issues.
 
 Path exclusion configuration follow this priority ordering:
 
-1. The extension will look for `.konveyorignore` files first. They are expected to follow the
-   [standard `.gitignore` syntax](http://git-scm.com/docs/gitignore). If any `.konveyorignore`
+1. The extension will look for `.aksmigrateignore` files first. They are expected to follow the
+   [standard `.gitignore` syntax](http://git-scm.com/docs/gitignore). If any `.aksmigrateignore`
    files are found in the workspace, they will be used.
 
-2. If no `.konveyorignore` files are found, any found `.gitignore` files will be used.
+2. If no `.aksmigrateignore` files are found, any found `.gitignore` files will be used.
 
 3. If neither are found, a default set of ignores will be used. (`.vscode/`, `target/`, `.git/`,
    and `node_modules/`).
@@ -75,12 +75,12 @@ if they're named directly.
 
 Customize your setup through the VS Code settings:
 
-| Setting                           | Description                                  | Default          |
-| --------------------------------- | -------------------------------------------- | ---------------- |
-| `konveyor.analyzerPath`           | Path to a custom analyzer binary.            | Bundled Analyzer |
-| `konveyor.logLevel`               | Log level for the extension (`debug`, etc.). | `debug`          |
-| `konveyor.analysis.incidentLimit` | Max number of incidents reported.            | `10000`          |
-| `konveyor.analysis.customRules`   | Array of paths to custom rulesets.           | `[]`             |
+| Setting                             | Description                                  | Default          |
+| ----------------------------------- | -------------------------------------------- | ---------------- |
+| `aksmigrate.analyzerPath`           | Path to a custom analyzer binary.            | Bundled Analyzer |
+| `aksmigrate.logLevel`               | Log level for the extension (`debug`, etc.). | `debug`          |
+| `aksmigrate.analysis.incidentLimit` | Max number of incidents reported.            | `10000`          |
+| `aksmigrate.analysis.customRules`   | Array of paths to custom rulesets.           | `[]`             |
 
 ---
 
@@ -88,18 +88,18 @@ Customize your setup through the VS Code settings:
 
 Access these commands via the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`):
 
-| Command                                                      | Description                              |
-| ------------------------------------------------------------ | ---------------------------------------- |
-| `Konveyor: Open the GenAI model provider configuration file` | Configure your Generative AI.            |
-| `Konveyor: Start Server`                                     | Start the backend server.                |
-| `Konveyor: Run Analysis`                                     | Analyze your codebase for modernization. |
-| `Konveyor: Stop Server`                                      | Stop the backend server.                 |
+| Command                                                         | Description                              |
+| --------------------------------------------------------------- | ---------------------------------------- |
+| `AKS Migrate: Open the GenAI model provider configuration file` | Configure your Generative AI.            |
+| `AKS Migrate: Start Server`                                     | Start the backend server.                |
+| `AKS Migrate: Run Analysis`                                     | Analyze your codebase for modernization. |
+| `AKS Migrate: Stop Server`                                      | Stop the backend server.                 |
 
 ---
 
 ## Contributing
 
-We welcome contributions! Please file issues on [GitHub](https://github.com/konveyor/editor-extensions/issues) or open a pull request.
+We welcome contributions! Please file issues on [GitHub](https://github.com/azure/aks-migrate/issues) or open a pull request.
 
 ---
 

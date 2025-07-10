@@ -1,18 +1,18 @@
 {
-  "name": "konveyor-ai",
-  "displayName": "Konveyor AI (kai) Extension for VSCode",
-  "description": "Generative AI assisted migration and modernization tool",
-  "author": "Konveyor",
-  "icon": "resources/konveyor-icon-color.png",
+  "name": "aks-migrate",
+  "displayName": "AKS Migrate Extension for VSCode",
+  "description": "AI-assisted migration and modernization tool for Azure Kubernetes Service",
+  "author": "AKS Migrate",
+  "icon": "resources/aks-migrate-icon-color.png",
   "license": "Apache-2.0",
   "version": "0.1.0",
   "main": "./out/extension.js",
-  "publisher": "konveyor",
+  "publisher": "Azure",
   "repository": {
     "type": "git",
-    "url": "https://github.com/konveyor/editor-extensions"
+    "url": "https://github.com/azure/aks-migrate"
   },
-  "bugs": "https://github.com/konveyor/editor-extensions/issues",
+  "bugs": "https://github.com/azure/aks-migrate/issues",
   "preview": false,
   "categories": [
     "Programming Languages",
@@ -33,8 +33,8 @@
     "npm": "^9.5.0 || >=10.5.2"
   },
   "activationEvents": [
-    "onFileSystem:konveyorMemFs",
-    "onFileSystem:konveyorReadOnly"
+    "onFileSystem:aksMigrateMemFs",
+    "onFileSystem:aksMigrateReadOnly"
   ],
   "contributes": {
     "javaExtensions": [
@@ -42,386 +42,386 @@
     ],
     "commands": [
       {
-        "command": "konveyor.openProfilesPanel",
+        "command": "aksmigrate.openProfilesPanel",
         "title": "Manage Analysis Profiles",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(settings-gear)"
       },
       {
-        "command": "konveyor.modelProviderSettingsOpen",
+        "command": "aksmigrate.modelProviderSettingsOpen",
         "title": "Open the GenAI model provider configuration file",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(gear)"
       },
       {
-        "command": "konveyor.modelProviderSettingsBackupReset",
+        "command": "aksmigrate.modelProviderSettingsBackupReset",
         "title": "Open the default the GenAI model provider configuration file and backup the current file",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(gear)"
       },
       {
-        "command": "konveyor.showAnalysisPanel",
-        "title": "Open Konveyor Analysis View",
-        "category": "Konveyor",
+        "command": "aksmigrate.showAnalysisPanel",
+        "title": "Open AKS Migrate Analysis View",
+        "category": "AKS Migrate",
         "icon": "$(book)"
       },
       {
-        "command": "konveyor.showResolutionPanel",
-        "title": "Open Konveyor Resolution View",
-        "category": "Konveyor",
+        "command": "aksmigrate.showResolutionPanel",
+        "title": "Open AKS Migrate Resolution View",
+        "category": "AKS Migrate",
         "icon": "$(beaker)"
       },
       {
-        "command": "konveyor.expandAllIssues",
+        "command": "aksmigrate.expandAllIssues",
         "title": "Expand All",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(expand-all)"
       },
       {
-        "command": "konveyor.expandSingleIssue",
+        "command": "aksmigrate.expandSingleIssue",
         "title": "Expand All",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(expand-all)"
       },
       {
-        "command": "konveyor.fixGroupOfIncidents",
+        "command": "aksmigrate.fixGroupOfIncidents",
         "title": "Resolve incidents",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(debug-console)"
       },
       {
-        "command": "konveyor.fixIncident",
+        "command": "aksmigrate.fixIncident",
         "title": "Resolve incident",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(debug-console)"
       },
       {
-        "command": "konveyor.openAnalysisDetails",
+        "command": "aksmigrate.openAnalysisDetails",
         "title": "Open Details",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(book)"
       },
       {
-        "command": "konveyor.overrideAnalyzerBinaries",
+        "command": "aksmigrate.overrideAnalyzerBinaries",
         "title": "Override Analyzer Binary",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(gear)"
       },
       {
-        "command": "konveyor.overrideKaiRpcServerBinaries",
+        "command": "aksmigrate.overrideKaiRpcServerBinaries",
         "title": "Override Rpc Server Binary",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(gear)"
       },
       {
-        "command": "konveyor.configureCustomRules",
+        "command": "aksmigrate.configureCustomRules",
         "title": "Configure Custom Rules",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(gear)"
       },
       {
-        "command": "konveyor.configureSourcesTargets",
+        "command": "aksmigrate.configureSourcesTargets",
         "title": "Configure Analysis Sources and Targets",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(gear)"
       },
       {
-        "command": "konveyor.configureLabelSelector",
+        "command": "aksmigrate.configureLabelSelector",
         "title": "Configure Analysis LabelSelector",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(gear)"
       },
       {
-        "command": "konveyor.startServer",
+        "command": "aksmigrate.startServer",
         "title": "Start Server",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(play)"
       },
       {
-        "command": "konveyor.stopServer",
+        "command": "aksmigrate.stopServer",
         "title": "Stop Server",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(stop)"
       },
       {
-        "command": "konveyor.restartServer",
+        "command": "aksmigrate.restartServer",
         "title": "Restart Server",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(restart)"
       },
       {
-        "command": "konveyor.runAnalysis",
+        "command": "aksmigrate.runAnalysis",
         "title": "Run Analysis",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(play)"
       },
       {
-        "command": "konveyor.loadStaticResults",
+        "command": "aksmigrate.loadStaticResults",
         "title": "Load results from files",
-        "category": "Konveyor"
+        "category": "AKS Migrate"
       },
       {
-        "command": "konveyor.loadResultsFromDataFolder",
+        "command": "aksmigrate.loadResultsFromDataFolder",
         "title": "Reload results",
-        "category": "Konveyor"
+        "category": "AKS Migrate"
       },
       {
-        "command": "konveyor.cleanRuleSets",
+        "command": "aksmigrate.cleanRuleSets",
         "title": "Reset analysis results",
-        "category": "Konveyor"
+        "category": "AKS Migrate"
       },
       {
-        "command": "konveyor.loadRuleSets",
+        "command": "aksmigrate.loadRuleSets",
         "title": "Load analysis results",
-        "category": "Konveyor"
+        "category": "AKS Migrate"
       },
       {
-        "command": "konveyor.loadSolution",
+        "command": "aksmigrate.loadSolution",
         "title": "Load solution",
-        "category": "Konveyor"
+        "category": "AKS Migrate"
       },
       {
-        "command": "konveyor.applyAll",
+        "command": "aksmigrate.applyAll",
         "title": "Apply All",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(check)"
       },
       {
-        "command": "konveyor.discardAll",
+        "command": "aksmigrate.discardAll",
         "title": "Discard All",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(discard)"
       },
       {
-        "command": "konveyor.applyFile",
+        "command": "aksmigrate.applyFile",
         "title": "Apply",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(check)"
       },
       {
-        "command": "konveyor.discardFile",
+        "command": "aksmigrate.discardFile",
         "title": "Discard",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(discard)"
       },
       {
-        "command": "konveyor.copyDiff",
-        "category": "Konveyor",
+        "command": "aksmigrate.copyDiff",
+        "category": "AKS Migrate",
         "title": "Copy Diff"
       },
       {
-        "command": "konveyor.copyPath",
-        "category": "Konveyor",
+        "command": "aksmigrate.copyPath",
+        "category": "AKS Migrate",
         "title": "Copy Path"
       },
       {
-        "command": "konveyor.diffView.next",
-        "category": "Konveyor",
+        "command": "aksmigrate.diffView.next",
+        "category": "AKS Migrate",
         "title": "Go to Next File"
       },
       {
-        "command": "konveyor.diffView.prev",
-        "category": "Konveyor",
+        "command": "aksmigrate.diffView.prev",
+        "category": "AKS Migrate",
         "title": "Go to Previous File"
       },
       {
-        "command": "konveyor.diffView.viewFix",
-        "category": "Konveyor",
+        "command": "aksmigrate.diffView.viewFix",
+        "category": "AKS Migrate",
         "title": "View suggested fix"
       },
       {
-        "command": "konveyor.diffView.applyBlockInline",
+        "command": "aksmigrate.diffView.applyBlockInline",
         "icon": "$(check)",
         "category": "diffEditor",
         "title": "Apply Block"
       },
       {
-        "command": "konveyor.diffView.applySelectionInline",
+        "command": "aksmigrate.diffView.applySelectionInline",
         "icon": "$(check)",
         "category": "diffEditor",
         "title": "Apply Selection"
       },
       {
-        "command": "konveyor.diffView.applyBlock",
+        "command": "aksmigrate.diffView.applyBlock",
         "icon": "$(arrow-left)",
         "category": "diffEditor",
         "title": "Apply Block"
       },
       {
-        "command": "konveyor.diffView.applySelection",
+        "command": "aksmigrate.diffView.applySelection",
         "icon": "$(arrow-left)",
         "category": "diffEditor",
         "title": "Apply Selection"
       },
       {
-        "command": "konveyor.configureGetSolutionParams",
+        "command": "aksmigrate.configureGetSolutionParams",
         "title": "Configure getSolution Parameters",
-        "category": "Konveyor",
+        "category": "AKS Migrate",
         "icon": "$(gear)"
       }
     ],
     "submenus": [
       {
-        "id": "konveyor.submenu",
-        "label": "Konveyor Actions"
+        "id": "aksmigrate.submenu",
+        "label": "AKS Migrate Actions"
       }
     ],
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "konveyor",
-          "title": "Konveyor",
-          "icon": "resources/konveyor-icon-color.png"
+          "id": "aksmigrate",
+          "title": "AKS Migrate",
+          "icon": "resources/aks-migrate-icon-color.png"
         }
       ]
     },
     "views": {
-      "konveyor": [
+      "aksmigrate": [
         {
-          "id": "konveyor.issueView",
-          "name": "Konveyor Issues"
+          "id": "aksmigrate.issueView",
+          "name": "AKS Migrate Issues"
         },
         {
-          "id": "konveyor.diffView",
-          "name": "Konveyor Resolutions"
+          "id": "aksmigrate.diffView",
+          "name": "AKS Migrate Resolutions"
         }
       ]
     },
     "menus": {
       "view/title": [
         {
-          "command": "konveyor.showAnalysisPanel",
+          "command": "aksmigrate.showAnalysisPanel",
           "group": "navigation@1",
-          "when": "view == konveyor.issueView"
+          "when": "view == aksmigrate.issueView"
         },
         {
-          "command": "konveyor.showResolutionPanel",
+          "command": "aksmigrate.showResolutionPanel",
           "group": "navigation@2",
-          "when": "view == konveyor.issueView"
+          "when": "view == aksmigrate.issueView"
         },
         {
-          "command": "konveyor.expandAllIssues",
+          "command": "aksmigrate.expandAllIssues",
           "group": "navigation@3",
-          "when": "view == konveyor.issueView"
+          "when": "view == aksmigrate.issueView"
         },
         {
-          "command": "konveyor.applyAll",
+          "command": "aksmigrate.applyAll",
           "group": "navigation@1",
-          "when": "view == konveyor.diffView"
+          "when": "view == aksmigrate.diffView"
         },
         {
-          "command": "konveyor.discardAll",
+          "command": "aksmigrate.discardAll",
           "group": "navigation@2",
-          "when": "view == konveyor.diffView"
+          "when": "view == aksmigrate.diffView"
         }
       ],
       "view/item/context": [
         {
-          "command": "konveyor.fixGroupOfIncidents",
+          "command": "aksmigrate.fixGroupOfIncidents",
           "group": "inline@3",
-          "when": "view == konveyor.issueView && viewItem == incident-type-item"
+          "when": "view == aksmigrate.issueView && viewItem == incident-type-item"
         },
         {
-          "command": "konveyor.fixIncident",
+          "command": "aksmigrate.fixIncident",
           "group": "inline@1",
-          "when": "view == konveyor.issueView && viewItem == reference-item"
+          "when": "view == aksmigrate.issueView && viewItem == reference-item"
         },
         {
-          "command": "konveyor.expandSingleIssue",
+          "command": "aksmigrate.expandSingleIssue",
           "group": "inline@2",
-          "when": "view == konveyor.issueView && viewItem == incident-type-item"
+          "when": "view == aksmigrate.issueView && viewItem == incident-type-item"
         },
         {
-          "command": "konveyor.openAnalysisDetails",
+          "command": "aksmigrate.openAnalysisDetails",
           "group": "inline@1",
-          "when": "view == konveyor.issueView && viewItem == incident-type-item"
+          "when": "view == aksmigrate.issueView && viewItem == incident-type-item"
         },
         {
-          "command": "konveyor.applyFile",
+          "command": "aksmigrate.applyFile",
           "group": "inline",
-          "when": "view == konveyor.diffView && viewItem == file-item"
+          "when": "view == aksmigrate.diffView && viewItem == file-item"
         },
         {
-          "command": "konveyor.discardFile",
+          "command": "aksmigrate.discardFile",
           "group": "inline",
-          "when": "view == konveyor.diffView && viewItem == file-item"
+          "when": "view == aksmigrate.diffView && viewItem == file-item"
         },
         {
-          "command": "konveyor.applyFile",
+          "command": "aksmigrate.applyFile",
           "group": "1@1",
-          "when": "view == konveyor.diffView && viewItem == file-item"
+          "when": "view == aksmigrate.diffView && viewItem == file-item"
         },
         {
-          "command": "konveyor.discardFile",
+          "command": "aksmigrate.discardFile",
           "group": "1@2",
-          "when": "view == konveyor.diffView && viewItem == file-item"
+          "when": "view == aksmigrate.diffView && viewItem == file-item"
         },
         {
-          "command": "konveyor.copyDiff",
+          "command": "aksmigrate.copyDiff",
           "group": "2@1",
-          "when": "view == konveyor.diffView && viewItem == file-item"
+          "when": "view == aksmigrate.diffView && viewItem == file-item"
         },
         {
-          "command": "konveyor.copyPath",
+          "command": "aksmigrate.copyPath",
           "group": "2@2",
-          "when": "view == konveyor.diffView && viewItem == file-item"
+          "when": "view == aksmigrate.diffView && viewItem == file-item"
         }
       ],
       "explorer/context": [
         {
-          "submenu": "konveyor.submenu",
+          "submenu": "aksmigrate.submenu",
           "group": "navigation@1"
         }
       ],
-      "konveyor.submenu": [],
+      "aksmigrate.submenu": [],
       "commandPalette": [
         {
-          "command": "konveyor.expandSingleIssue",
+          "command": "aksmigrate.expandSingleIssue",
           "when": "never"
         },
         {
-          "command": "konveyor.loadRuleSets",
+          "command": "aksmigrate.loadRuleSets",
           "when": "never"
         },
         {
-          "command": "konveyor.loadSolution",
+          "command": "aksmigrate.loadSolution",
           "when": "never"
         },
         {
-          "command": "konveyor.applyFile",
+          "command": "aksmigrate.applyFile",
           "when": "never"
         },
         {
-          "command": "konveyor.discardFile",
+          "command": "aksmigrate.discardFile",
           "when": "never"
         },
         {
-          "command": "konveyor.copyDiff",
+          "command": "aksmigrate.copyDiff",
           "when": "never"
         },
         {
-          "command": "konveyor.copyPath",
+          "command": "aksmigrate.copyPath",
           "when": "never"
         },
         {
-          "command": "konveyor.diffView.next",
+          "command": "aksmigrate.diffView.next",
           "when": "never"
         },
         {
-          "command": "konveyor.diffView.prev",
+          "command": "aksmigrate.diffView.prev",
           "when": "never"
         },
         {
-          "command": "konveyor.diffView.viewFix",
+          "command": "aksmigrate.diffView.viewFix",
           "when": "never"
         }
       ]
     },
     "configuration": {
       "type": "object",
-      "title": "Konveyor",
+      "title": "AKS Migrate",
       "properties": {
-        "konveyor.logLevel": {
+        "aksmigrate.logLevel": {
           "type": "string",
           "enum": [
             "TRACE",
@@ -436,42 +436,42 @@
           "scope": "window",
           "order": 0
         },
-        "konveyor.analyzerPath": {
+        "aksmigrate.analyzerPath": {
           "type": "string",
           "default": "",
           "description": "Path to the analyzer binary. If not set, the extension will use the bundled binary.",
           "scope": "resource",
           "order": 2
         },
-        "konveyor.kaiRpcServerPath": {
+        "aksmigrate.kaiRpcServerPath": {
           "type": "string",
           "default": "",
           "description": "Path to the rpc-server binary. If not set, the extension will use the bundled binary.",
           "scope": "resource",
           "order": 1
         },
-        "konveyor.solutionServer.url": {
+        "aksmigrate.solutionServer.url": {
           "type": "string",
           "default": "http://localhost:8000",
           "description": "URL for the MCP solution server endpoint.",
           "scope": "window",
           "order": 3
         },
-        "konveyor.solutionServer.enabled": {
+        "aksmigrate.solutionServer.enabled": {
           "type": "boolean",
           "default": false,
           "description": "Enable the MCP solution server client.",
           "scope": "window",
           "order": 4
         },
-        "konveyor.analysis.analyzeOnSave": {
+        "aksmigrate.analysis.analyzeOnSave": {
           "type": "boolean",
           "default": true,
           "description": "Should analysis of file be run when it is saved?",
           "scope": "window",
           "order": 6
         },
-        "konveyor.diffEditorType": {
+        "aksmigrate.diffEditorType": {
           "type": "string",
           "enum": [
             "diff",
@@ -482,21 +482,21 @@
           "scope": "window",
           "order": 7
         },
-        "konveyor.kai.agentMode": {
+        "aksmigrate.kai.agentMode": {
           "type": "boolean",
           "default": false,
           "description": "(Experimental) Use agentic flow when getting solution.",
           "scope": "window",
           "order": 6
         },
-        "konveyor.kai.superAgentMode": {
+        "aksmigrate.kai.superAgentMode": {
           "type": "boolean",
           "default": false,
           "description": "(Experimental) Use agentic flow when getting solution.",
           "scope": "window",
           "order": 6
         },
-        "konveyor.kai.excludedDiagnosticSources": {
+        "aksmigrate.kai.excludedDiagnosticSources": {
           "type": "array",
           "default": [
             "trunk"
@@ -505,7 +505,7 @@
           "scope": "window",
           "order": 8
         },
-        "konveyor.kai.getSolutionMaxPriority": {
+        "aksmigrate.kai.getSolutionMaxPriority": {
           "type": [
             "number",
             "null"
@@ -515,7 +515,7 @@
           "scope": "window",
           "order": 40
         },
-        "konveyor.kai.getSolutionMaxEffort": {
+        "aksmigrate.kai.getSolutionMaxEffort": {
           "type": "string",
           "enum": [
             "Low",
@@ -528,7 +528,7 @@
           "scope": "window",
           "order": 40
         },
-        "konveyor.kai.getSolutionMaxLLMQueries": {
+        "aksmigrate.kai.getSolutionMaxLLMQueries": {
           "type": [
             "number",
             "null"
@@ -539,7 +539,7 @@
           "scope": "window",
           "order": 40
         },
-        "konveyor.kai.cacheDir": {
+        "aksmigrate.kai.cacheDir": {
           "type": [
             "string",
             "null"
@@ -549,56 +549,56 @@
           "scope": "window",
           "order": 50
         },
-        "konveyor.kai.traceEnabled": {
+        "aksmigrate.kai.traceEnabled": {
           "type": "boolean",
           "default": false,
           "description": "Whether to create traces of the communication with the model",
           "scope": "window",
           "order": 50
         },
-        "konveyor.kai.demoMode": {
+        "aksmigrate.kai.demoMode": {
           "type": "boolean",
           "default": false,
           "description": "Whether to run Kai in demo mode i.e. use cached LLM responses",
           "scope": "window",
           "order": 50
         },
-        "konveyor.analysis.incidentLimit": {
+        "aksmigrate.analysis.incidentLimit": {
           "type": "number",
           "default": 10000,
           "description": "Maximum number of incidents to report",
           "scope": "window",
           "order": 99
         },
-        "konveyor.analysis.contextLines": {
+        "aksmigrate.analysis.contextLines": {
           "type": "number",
           "default": 10,
           "description": "Number of lines of context to include in incident reports.",
           "scope": "window",
           "order": 99
         },
-        "konveyor.analysis.codeSnipLimit": {
+        "aksmigrate.analysis.codeSnipLimit": {
           "type": "number",
           "default": 10,
           "description": "Number of lines of code to include in incident reports.",
           "scope": "window",
           "order": 99
         },
-        "konveyor.analysis.analyzeKnownLibraries": {
+        "aksmigrate.analysis.analyzeKnownLibraries": {
           "type": "boolean",
           "default": false,
           "description": "Should the analyzer analyze known open-source libraries?",
           "scope": "window",
           "order": 99
         },
-        "konveyor.analysis.analyzeDependencies": {
+        "aksmigrate.analysis.analyzeDependencies": {
           "type": "boolean",
           "default": true,
           "description": "Should the analyzer analyze project dependencies?",
           "scope": "window",
           "order": 99
         },
-        "konveyor.logging.traceMessageConnection": {
+        "aksmigrate.logging.traceMessageConnection": {
           "type": "boolean",
           "default": false,
           "description": "Trace the jsonrpc calls between the extension and the kai server?",
@@ -608,11 +608,11 @@
     },
     "keybindings": [
       {
-        "command": "konveyor.diffView.next",
+        "command": "aksmigrate.diffView.next",
         "key": "f4"
       },
       {
-        "command": "konveyor.diffView.prev",
+        "command": "aksmigrate.diffView.prev",
         "key": "shift+f4"
       }
     ]

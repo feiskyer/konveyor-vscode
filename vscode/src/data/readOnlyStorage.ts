@@ -7,7 +7,7 @@ import {
   workspace,
 } from "vscode";
 
-export default class KonveyorReadOnlyProvider implements TextDocumentContentProvider {
+export default class AksMigrateReadOnlyProvider implements TextDocumentContentProvider {
   onDidChange?: Event<Uri> | undefined;
   provideTextDocumentContent(uri: Uri, _token: CancellationToken): ProviderResult<string> {
     return workspace.fs

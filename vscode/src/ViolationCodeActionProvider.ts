@@ -62,7 +62,7 @@ export class ViolationCodeActionProvider implements vscode.CodeActionProvider {
 
     const askKaiAction = new vscode.CodeAction("Ask Kai", vscode.CodeActionKind.QuickFix);
     askKaiAction.command = {
-      command: "konveyor.getSolution",
+      command: "aksmigrate.getSolution",
       title: "Ask Kai",
       arguments: [[incident], this.state.data.solutionEffort],
     };
@@ -71,12 +71,12 @@ export class ViolationCodeActionProvider implements vscode.CodeActionProvider {
 
     if (continueExt) {
       const askContinueAction = new vscode.CodeAction(
-        "Ask Continue with Konveyor Context",
+        "Ask Continue with AKS Migrate Context",
         vscode.CodeActionKind.QuickFix,
       );
 
       askContinueAction.command = {
-        command: "konveyor.askContinue",
+        command: "aksmigrate.askContinue",
         title: "Ask Continue with Konveyor Context",
         arguments: [incident],
       };

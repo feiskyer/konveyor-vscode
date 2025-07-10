@@ -1,7 +1,7 @@
 import { AnalyzerClient } from "./client/analyzerClient";
-import { KonveyorFileModel } from "./diffView";
+import { AksMigrateFileModel } from "./diffView";
 import { MemFS } from "./data/fileSystemProvider";
-import { KonveyorGUIWebviewViewProvider } from "./KonveyorGUIWebviewViewProvider";
+import { AksMigrateGUIWebviewViewProvider } from "./AksMigrateGUIWebviewViewProvider";
 import * as vscode from "vscode";
 import { AnalysisProfile, ExtensionData } from "@editor-extensions/shared";
 import { KaiFsCache, SolutionServerClient } from "@editor-extensions/agentic";
@@ -12,11 +12,11 @@ import { DiagnosticTaskManager } from "./taskManager/taskManager";
 export interface ExtensionState {
   analyzerClient: AnalyzerClient;
   solutionServerClient: SolutionServerClient;
-  webviewProviders: Map<string, KonveyorGUIWebviewViewProvider>;
+  webviewProviders: Map<string, AksMigrateGUIWebviewViewProvider>;
   extensionContext: vscode.ExtensionContext;
   diagnosticCollection: vscode.DiagnosticCollection;
   memFs: MemFS;
-  fileModel: KonveyorFileModel;
+  fileModel: AksMigrateFileModel;
   issueModel: IssuesModel;
   data: Immutable<ExtensionData>;
   mutateData: (recipe: (draft: ExtensionData) => void) => Immutable<ExtensionData>;

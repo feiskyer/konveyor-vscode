@@ -1,4 +1,4 @@
-# Konveyor Editor Extensions
+# AKS Migrate Editor Extension
 
 ## Getting Started
 
@@ -17,8 +17,8 @@ Ensure that you have the following installed:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/konveyor/editor-extensions
-   cd editor-extensions
+   git clone https://github.com/azure/aks-migrate
+   cd aks-migrate
    ```
 
 2. Install the dependencies for both the extension and the web UI:
@@ -65,7 +65,7 @@ Note: The extension requires vscode to be open on a workspace. It will not be vi
 Extension Development Host window until you open a folder.
 
 Inside the Extension Development Host window, press Ctrl+Shift+P (or Cmd+Shift+P on Mac) to open
-the Command Palette and type `View: Show Konveyor` to open the Konveyor UI within the host.
+the Command Palette and type `View: Show AKS Migrate` to open the AKS Migrate UI within the host.
 
 ### Watch Mode
 
@@ -103,7 +103,7 @@ These command:
 - Copy everything needed for the vsix to the `dist/` folder
 - Package the contents of `dist/` into a vsix archive
 
-When packaging is complete, the vsix will be `dist/konveyor-ai-0.1.0.vsix` (version number will match
+When packaging is complete, the vsix will be `dist/aks-migrate-0.1.0.vsix` (version number will match
 the `vscode/package.json` version number).
 
 ## Downloading the extension's runtime assets
@@ -217,11 +217,11 @@ Non workspace folders:
 
 ## Contributing
 
-Please read our [Contributing Guide](https://github.com/konveyor/community/blob/main/CONTRIBUTING.md) before submitting a pull request.
+Please read our [Contributing Guide](https://github.com/azure/aks-migrate/blob/main/CONTRIBUTING.md) before submitting a pull request.
 
 ## Code of Conduct
 
-This project follows the Konveyor [Code of Conduct](https://github.com/konveyor/community/blob/main/CODE_OF_CONDUCT.md).
+This project follows the AKS Migrate [Code of Conduct](https://github.com/azure/aks-migrate/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 

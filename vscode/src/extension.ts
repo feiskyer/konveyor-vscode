@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { KonveyorGUIWebviewViewProvider } from "./KonveyorGUIWebviewViewProvider";
+import { AksMigrateGUIWebviewViewProvider } from "./AksMigrateGUIWebviewViewProvider";
 import { registerAllCommands as registerAllCommands } from "./commands";
 import { ExtensionState } from "./extensionState";
 import { ExtensionData } from "@editor-extensions/shared";
@@ -7,7 +7,7 @@ import { SimpleInMemoryCache } from "@editor-extensions/agentic";
 import { ViolationCodeActionProvider } from "./ViolationCodeActionProvider";
 import { AnalyzerClient } from "./client/analyzerClient";
 import { SolutionServerClient } from "@editor-extensions/agentic";
-import { KonveyorFileModel, registerDiffView } from "./diffView";
+import { AksMigrateFileModel, registerDiffView } from "./diffView";
 import { MemFS } from "./data";
 import { Immutable, produce } from "immer";
 import { registerAnalysisTrigger } from "./analysis";
@@ -111,11 +111,11 @@ class VsCodeExtension {
         getConfigSolutionServerUrl(),
         getConfigSolutionServerEnabled(),
       ),
-      webviewProviders: new Map<string, KonveyorGUIWebviewViewProvider>(),
+      webviewProviders: new Map<string, AksMigrateGUIWebviewViewProvider>(),
       extensionContext: context,
-      diagnosticCollection: vscode.languages.createDiagnosticCollection("konveyor"),
+      diagnosticCollection: vscode.languages.createDiagnosticCollection("aksmigrate"),
       memFs: new MemFS(),
-      fileModel: new KonveyorFileModel(),
+      fileModel: new AksMigrateFileModel(),
       issueModel: new IssuesModel(),
       kaiFsCache: new SimpleInMemoryCache(),
       taskManager,
@@ -183,7 +183,7 @@ class VsCodeExtension {
         vscode.workspace.onDidChangeConfiguration((event) => {
           console.log("Configuration modified!");
 
-          if (event.affectsConfiguration("konveyor.kai.getSolutionMaxEffort")) {
+          if (event.affectsConfiguration("aksmigrate.kai.getSolutionMaxEffort")) {
             console.log("Effort modified!");
             const effort = getConfigSolutionMaxEffortLevel();
             this.state.mutateData((draft) => {
@@ -191,13 +191,13 @@ class VsCodeExtension {
             });
           }
           if (
-            event.affectsConfiguration("konveyor.solutionServer.url") ||
-            event.affectsConfiguration("konveyor.solutionServer.enabled")
+            event.affectsConfiguration("aksmigrate.solutionServer.url") ||
+            event.affectsConfiguration("aksmigrate.solutionServer.enabled")
           ) {
             console.log("Solution server configuration modified!");
             vscode.window
               .showInformationMessage(
-                "Solution server configuration has changed. Please restart the Konveyor extension for changes to take effect.",
+                "Solution server configuration has changed. Please restart the AKS Migrate extension for changes to take effect.",
                 "Restart Now",
               )
               .then((selection) => {
@@ -212,10 +212,10 @@ class VsCodeExtension {
       // Load profiles and update wizard state
       await this.loadProfilesAndInitializeWizard();
 
-      vscode.commands.executeCommand("konveyor.loadResultsFromDataFolder");
+      vscode.commands.executeCommand("aksmigrate.loadResultsFromDataFolder");
     } catch (error) {
       console.error("Error initializing extension:", error);
-      vscode.window.showErrorMessage(`Failed to initialize Konveyor extension: ${error}`);
+      vscode.window.showErrorMessage(`Failed to initialize AKS Migrate extension: ${error}`);
     }
   }
 
@@ -252,15 +252,15 @@ class VsCodeExtension {
   private checkWorkspace(): void {
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 1) {
       vscode.window.showWarningMessage(
-        "Konveyor does not currently support multi-root workspaces. Only the first workspace folder will be analyzed.",
+        "AKS Migrate does not currently support multi-root workspaces. Only the first workspace folder will be analyzed.",
       );
     }
   }
 
   private registerWebviewProvider(): void {
-    const sidebarProvider = new KonveyorGUIWebviewViewProvider(this.state, "wizard");
-    const resolutionViewProvider = new KonveyorGUIWebviewViewProvider(this.state, "resolution");
-    const profilesViewProvider = new KonveyorGUIWebviewViewProvider(this.state, "profiles");
+    const sidebarProvider = new AksMigrateGUIWebviewViewProvider(this.state, "wizard");
+    const resolutionViewProvider = new AksMigrateGUIWebviewViewProvider(this.state, "resolution");
+    const profilesViewProvider = new AksMigrateGUIWebviewViewProvider(this.state, "profiles");
 
     this.state.webviewProviders.set("sidebar", sidebarProvider);
     this.state.webviewProviders.set("resolution", resolutionViewProvider);
@@ -274,17 +274,17 @@ class VsCodeExtension {
 
     this.context.subscriptions.push(
       vscode.window.registerWebviewViewProvider(
-        KonveyorGUIWebviewViewProvider.SIDEBAR_VIEW_TYPE,
+        AksMigrateGUIWebviewViewProvider.SIDEBAR_VIEW_TYPE,
         sidebarProvider,
         { webviewOptions: { retainContextWhenHidden: true } },
       ),
       vscode.window.registerWebviewViewProvider(
-        KonveyorGUIWebviewViewProvider.RESOLUTION_VIEW_TYPE,
+        AksMigrateGUIWebviewViewProvider.RESOLUTION_VIEW_TYPE,
         resolutionViewProvider,
         { webviewOptions: { retainContextWhenHidden: true } },
       ),
       vscode.window.registerWebviewViewProvider(
-        KonveyorGUIWebviewViewProvider.PROFILES_VIEW_TYPE,
+        AksMigrateGUIWebviewViewProvider.PROFILES_VIEW_TYPE,
         profilesViewProvider,
         {
           webviewOptions: { retainContextWhenHidden: true },
@@ -299,7 +299,7 @@ class VsCodeExtension {
     } catch (error) {
       console.error("Critical error during command registration:", error);
       vscode.window.showErrorMessage(
-        `Konveyor extension failed to register commands properly. The extension may not function correctly. Error: ${error instanceof Error ? error.message : String(error)}`,
+        `AKS Migrate extension failed to register commands properly. The extension may not function correctly. Error: ${error instanceof Error ? error.message : String(error)}`,
       );
       // Re-throw to indicate the extension is not in a good state
       throw error;
@@ -365,8 +365,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   } catch (error) {
     await extension?.dispose();
     extension = undefined;
-    console.error("Failed to activate Konveyor extension:", error);
-    vscode.window.showErrorMessage(`Failed to activate Konveyor extension: ${error}`);
+    console.error("Failed to activate AKS Migrate extension:", error);
+    vscode.window.showErrorMessage(`Failed to activate AKS Migrate extension: ${error}`);
     throw error; // Re-throw to ensure VS Code marks the extension as failed to activate
   }
 }

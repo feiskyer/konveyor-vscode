@@ -31,7 +31,7 @@ import * as vscode from "vscode";
 import { FileItemNavigation } from "./diff-view";
 import { isUri } from "../utilities";
 
-export class KonveyorFileModel implements FileItemNavigation<FileItem> {
+export class AksMigrateFileModel implements FileItemNavigation<FileItem> {
   private _onDidChange = new vscode.EventEmitter<FileItem | undefined>();
   readonly onDidChangeTreeData = this._onDidChange.event;
 
@@ -40,7 +40,7 @@ export class KonveyorFileModel implements FileItemNavigation<FileItem> {
   updateLocations(locations: vscode.Location[]) {
     this.items.splice(0, this.items.length);
     locations
-      .toSorted(KonveyorFileModel._compareLocations)
+      .toSorted(AksMigrateFileModel._compareLocations)
       .map((item) => new FileItem(item.uri.with({ fragment: "" }), "", this))
       .forEach((item) => this.items.push(item));
     this._onDidChange.fire(undefined);
@@ -136,13 +136,13 @@ export class KonveyorFileModel implements FileItemNavigation<FileItem> {
   }
 }
 
-export class KonveyorTreeDataProvider implements vscode.TreeDataProvider<FileItem> {
+export class AksMigrateTreeDataProvider implements vscode.TreeDataProvider<FileItem> {
   private readonly _listener: vscode.Disposable;
   private readonly _onDidChange = new vscode.EventEmitter<FileItem | undefined>();
 
   readonly onDidChangeTreeData = this._onDidChange.event;
 
-  constructor(private readonly _model: KonveyorFileModel) {
+  constructor(private readonly _model: AksMigrateFileModel) {
     this._listener = _model.onDidChangeTreeData(() => this._onDidChange.fire(undefined));
   }
 
@@ -158,7 +158,7 @@ export class KonveyorTreeDataProvider implements vscode.TreeDataProvider<FileIte
     result.iconPath = vscode.ThemeIcon.File;
     result.collapsibleState = vscode.TreeItemCollapsibleState.None;
     result.command = {
-      command: "konveyor.diffView.viewFix",
+      command: "aksmigrate.diffView.viewFix",
       title: "Open diff",
       arguments: [element.uri],
     };
@@ -181,7 +181,7 @@ export class FileItem {
   constructor(
     readonly uri: vscode.Uri,
     readonly patch: string,
-    readonly model: KonveyorFileModel,
+    readonly model: AksMigrateFileModel,
   ) {}
 
   // --- adapter
@@ -191,7 +191,7 @@ export class FileItem {
   }
 
   apply(): void {
-    vscode.commands.executeCommand("konveyor.applyFile", this.uri);
+    vscode.commands.executeCommand("aksmigrate.applyFile", this.uri);
   }
 
   revert(): void {

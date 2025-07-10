@@ -68,8 +68,8 @@ export class AnalysisDiagnosticTask implements Task {
       category: "",
       message: "",
     };
-    if (diagnostic.source !== "konveyor") {
-      throw new Error(`The diagnostic doesn't seem to come from Konveyor`);
+    if (diagnostic.source !== "aksmigrate") {
+      throw new Error(`The diagnostic doesn't seem to come from AKS Migrate`);
     }
     const lines = diagnostic.message.split("\n");
     parsed.message = lines.length > 0 ? lines[0] : "";
@@ -199,7 +199,7 @@ export class DiagnosticTaskManager implements TaskManager {
         .filter((d) => !this.excludedDiagnosticSources.includes(d.source?.toLowerCase() ?? ""))
         .map((diagnostic) => {
           switch (diagnostic.source?.toLowerCase() ?? "") {
-            case "konveyor":
+            case "aksmigrate":
               try {
                 return new AnalysisDiagnosticTask(uri, diagnostic);
               } catch {

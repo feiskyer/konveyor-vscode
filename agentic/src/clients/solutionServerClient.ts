@@ -44,7 +44,7 @@ export class SolutionServerClient {
     // Create MCP client
     this.mcpClient = new Client(
       {
-        name: "konveyor-vscode-extension",
+        name: "aks-migrate-vscode-extension",
         version: "1.0.0",
       },
       {

@@ -30,7 +30,7 @@ export const ReceivedMessage: React.FC<ReceivedMessageProps> = ({
   return (
     <Message
       timestamp={formatTimestamp(timestamp)}
-      name="Konveyor"
+      name="AKS Migrate"
       role="bot"
       isLoading={isLoading}
       avatar={botAv}

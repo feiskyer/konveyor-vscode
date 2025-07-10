@@ -39,7 +39,7 @@ export const SetupStep: React.FC = () => {
         <Content>
           <p>
             Configure your AI provider to enable intelligent code analysis and solution generation.
-            Konveyor uses AI to provide context-aware suggestions for modernizing your applications.
+            AKS Migrate uses AI to provide context-aware suggestions for modernizing your applications.
           </p>
         </Content>
       </div>
@@ -84,7 +84,7 @@ export const SetupStep: React.FC = () => {
                 </Alert>
                 
                 <Content>
-                  <p>Konveyor supports multiple AI providers including:</p>
+                  <p>AKS Migrate supports multiple AI providers including:</p>
                   <ul>
                     <li>OpenAI (ChatGPT)</li>
                     <li>Azure OpenAI</li>
