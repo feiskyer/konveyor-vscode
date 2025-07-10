@@ -1,0 +1,217 @@
+name: CI (repo level)
+
+on:
+  push:
+    branches:
+      - "main"
+      - "release-*"
+
+  pull_request:
+    paths-ignore:
+      - "docs/**"
+    branches:
+      - "main"
+      - "release-*"
+
+  workflow_dispatch:
+
+  workflow_call:
+
+concurrency:
+  group: ci-repo-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# https://typicode.github.io/husky/how-to.html#ci-server-and-docker
+env:
+  HUSKY: 0
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install workspace dependencies
+        run: |
+          npm ci
+
+      - name: Lint sources
+        run: |
+          npm run lint
+
+  build:
+    needs: lint
+    name: Build (${{ matrix.arch }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            arch: linux
+          - os: macos-latest
+            arch: macos
+          - os: windows-latest
+            arch: windows
+      max-parallel: 3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install workspace dependencies
+        run: |
+          npm ci
+
+      - name: Build
+        run: |
+          npm run build
+
+  test:
+    name: Test (${{ matrix.arch }})
+    runs-on: ${{ matrix.os }}
+    needs: build
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            arch: linux
+          - os: macos-latest
+            arch: macos
+          - os: windows-latest
+            arch: windows
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install workspace dependencies
+        run: |
+          npm ci
+
+      #
+      # TODO: To run a proper test, the Kai assets need to be downloaded for the proper place
+      # TODO: For example, this would be nice...
+      # - name: Collect assets needed to run Kai on the current runtime's platform/arch
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     npm run collect-assets -- \
+      #       --use-workflow-artifacts \
+      #       --branch=main \
+      #       --platform=runtime \
+      #       --arch=runtime
+
+      # Run tests on Linux
+      - name: Run tests (Linux)
+        if: matrix.arch == 'linux'
+        run: xvfb-run -a npm test
+
+      # Run tests on macOS
+      - name: Run tests (macOS)
+        if: matrix.arch == 'macos'
+        run: npm test
+
+      # Run tests on Windows
+      - name: Run tests (Windows)
+        if: matrix.arch == 'windows'
+        shell: cmd
+        run: npm test
+
+  package:
+    name: Package (${{ matrix.arch }})
+    runs-on: ${{ matrix.os }}
+    needs: test
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            arch: linux
+      max-parallel: 1
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install workspace dependencies
+        run: |
+          npm ci
+
+      - name: Build the project and generate the .vsix
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm run build
+          npm run collect-assets -- --use-workflow-artifacts --branch=main
+          npm run dist
+          npm run package
+
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ github.event_name == 'pull_request' && ! github.event.pull_request.merged }}
+        with:
+          name: vscode-extension
+          path: "dist/*.vsix"
+
+      - name: Set vsix suffix
+        if: ${{ ! (github.event_name == 'pull_request' && ! github.event.pull_request.merged) }}
+        id: set_time
+        run: echo "vsix_suffix=$(date +%Y%m%d-%H%M)-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Move vsix
+        if: ${{ ! (github.event_name == 'pull_request' && ! github.event.pull_request.merged) }}
+        run: |
+          cd ./dist
+          mv *.vsix konveyor-ai.vsix
+          cd ..
+
+      - name: Deploy release
+        uses: WebFreak001/deploy-nightly@v3.2.0
+        if: ${{ ! (github.event_name == 'pull_request' && ! github.event.pull_request.merged) }}
+        with:
+          upload_url: https://uploads.github.com/repos/konveyor/editor-extensions/releases/223723085/assets{?name,label}
+          release_id: 223723085
+          asset_path: ./dist/konveyor-ai.vsix
+          asset_name: konveyor-ai-${{ steps.set_time.outputs.vsix_suffix }}.vsix
+          asset_content_type: application/octet-stream
+          ignore_hash: true
+
+      - name: Cleanup old assets
+        if: ${{ ! (github.event_name == 'pull_request' && ! github.event.pull_request.merged) }}
+        run: |
+          c=1
+          for i in $(gh release view -R konveyor/editor-extensions development-builds --json assets | jq -r .assets[].name | sort -r); do
+            if [ "$c" -gt 7 ]; then
+              gh release delete-asset -y -R konveyor/editor-extensions development-builds $i
+            fi
+            c=$((c+1))
+          done
+        env:
+          GH_TOKEN: ${{ github.token }}
