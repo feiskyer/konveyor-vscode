@@ -35,9 +35,13 @@
     "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@types/vscode-webview": "^1.57.5",
+    "expect": "^29.7.0",
     "global-jsdom": "^26.0.0",
-    "jsdom": "^26.0.0"
+    "jsdom": "^26.0.0",
+    "tsx": "^4.20.3"
   }
 }

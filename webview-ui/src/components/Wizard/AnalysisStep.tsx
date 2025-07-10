@@ -21,20 +21,20 @@ import { startServer, runAnalysis, stopServer } from "../../hooks/actions";
 
 export const AnalysisStep: React.FC = () => {
   const { state, dispatch } = useExtensionStateContext();
-  const { 
-    isAnalyzing, 
-    isStartingServer, 
-    serverState, 
-    ruleSets, 
+  const {
+    isAnalyzing,
+    isStartingServer,
+    serverState,
+    ruleSets,
     enhancedIncidents
   } = state;
 
   const isAnalysisCompleted = enhancedIncidents.length > 0 || ruleSets.length > 0;
   const hasIncidents = enhancedIncidents.length > 0;
-  
+
   const isServerReady = serverState === "running";
   const canRunAnalysis = isServerReady && !isAnalyzing && !isStartingServer;
-  
+
   const totalIncidents = enhancedIncidents.length;
   const totalRuleSets = ruleSets.length;
 
@@ -113,7 +113,7 @@ export const AnalysisStep: React.FC = () => {
         <Content>
           <p>
             Run static analysis on your codebase to identify migration opportunities and potential issues.
-            The analysis will scan your code against the selected profile's rules and generate actionable insights.
+            The analysis will scan your code against the selected profile&apos;s rules and generate actionable insights.
           </p>
         </Content>
       </div>
@@ -124,10 +124,10 @@ export const AnalysisStep: React.FC = () => {
         <CardTitle>Analysis Server</CardTitle>
         <CardBody>
           {getServerStatusAlert()}
-          
+
           {!isServerReady && (
-            <Button 
-              variant="primary" 
+            <Button
+              variant="primary"
               onClick={handleStartServer}
               isLoading={isStartingServer}
               isDisabled={isStartingServer}
@@ -160,11 +160,11 @@ export const AnalysisStep: React.FC = () => {
                     </FlexItem>
                   </Flex>
                 </Alert>
-                
-                <Progress 
+
+                <Progress
                   style={{ marginBottom: "16px" }}
                 />
-                
+
                 <Button variant="secondary" onClick={handleStopAnalysis}>
                   Stop Analysis
                 </Button>
@@ -176,9 +176,9 @@ export const AnalysisStep: React.FC = () => {
                     Start the analysis to scan your codebase for migration opportunities using the selected profile.
                   </p>
                 </Content>
-                
-                <Button 
-                  variant="primary" 
+
+                <Button
+                  variant="primary"
                   onClick={handleRunAnalysis}
                   isDisabled={!canRunAnalysis}
                 >
@@ -202,12 +202,12 @@ export const AnalysisStep: React.FC = () => {
             >
               Found {totalIncidents} incidents across {totalRuleSets} rule sets.
             </Alert>
-            
-            <ViolationsCount 
+
+            <ViolationsCount
               violationsCount={totalRuleSets}
               incidentsCount={totalIncidents}
             />
-            
+
             <div style={{ marginTop: "20px" }}>
               <AnalysisResults results={[]} />
             </div>
@@ -222,7 +222,7 @@ export const AnalysisStep: React.FC = () => {
           isInline
           style={{ marginTop: "20px" }}
         >
-          The analysis completed but found no migration issues in your codebase. 
+          The analysis completed but found no migration issues in your codebase.
           This could mean your code is already compatible with the target technology,
           or you may need to adjust your analysis profile settings.
         </Alert>
@@ -235,8 +235,8 @@ export const AnalysisStep: React.FC = () => {
             isInline
             style={{ marginTop: "20px" }}
           >
-            Analysis found issues that can be addressed with AI assistance. 
-            Click "Next" to proceed to the resolution step.
+            Analysis found issues that can be addressed with AI assistance.
+            Click &quot;Next&quot; to proceed to the resolution step.
           </Alert>
         )}
       </div>
