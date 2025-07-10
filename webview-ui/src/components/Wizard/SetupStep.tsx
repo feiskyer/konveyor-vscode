@@ -77,12 +77,12 @@ export const SetupStep: React.FC = () => {
                   isInline
                   style={{ marginBottom: "16px" }}
                 >
-                  {analysisConfig.providerKeyMissing 
+                  {analysisConfig.providerKeyMissing
                     ? "AI provider API key is missing or invalid."
                     : "AI provider is not configured yet."
                   }
                 </Alert>
-                
+
                 <Content>
                   <p>AKS Migrate supports multiple AI providers including:</p>
                   <ul>
@@ -118,7 +118,7 @@ export const SetupStep: React.FC = () => {
             isInline
             style={{ marginTop: "20px" }}
           >
-            Your AI provider is configured. Click "Next" to proceed to profile configuration.
+            Your AI provider is configured. Click &quot;Next&quot; to proceed to profile configuration.
           </Alert>
         )}
       </div>
