@@ -8,6 +8,8 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     name: Verify PR contents
+    # Skip verification for dependabot PRs
+    if: github.event.pull_request.user.login != 'dependabot[bot]'
     steps:
       - name: Check Title
         id: verifier
