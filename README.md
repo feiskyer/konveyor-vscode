@@ -91,7 +91,7 @@ To build the extension and generate a vsix, run the following commands:
 
 ```bash
 npm run build
-npm run collect-assets
+npm run collect-assets:dev
 npm run dist
 npm run package
 ```
