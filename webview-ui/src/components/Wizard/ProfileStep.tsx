@@ -14,6 +14,7 @@ import {
   Title,
   Content,
 } from "@patternfly/react-core";
+import { PlusIcon } from "@patternfly/react-icons/dist/esm/icons/plus-icon";
 import { useExtensionStateContext } from "../../context/ExtensionStateContext";
 
 export const ProfileStep: React.FC = () => {
@@ -40,6 +41,7 @@ export const ProfileStep: React.FC = () => {
   };
 
   const selectedProfile = profiles.find((p) => p.id === activeProfileId);
+  const hasProfiles = profiles.length > 0;
 
   return (
     <div className="wizard-step">
@@ -58,10 +60,29 @@ export const ProfileStep: React.FC = () => {
 
       <div className="wizard-step-content">
         <Card style={{ marginTop: "20px" }}>
-          <CardTitle>Select Analysis Profile</CardTitle>
+          <CardTitle>{hasProfiles ? "Select Analysis Profile" : "Create Analysis Profile"}</CardTitle>
           <CardBody>
             {!profilesLoaded ? (
               <Alert variant={AlertVariant.info} title="Loading profiles..." isInline />
+            ) : !hasProfiles ? (
+              <>
+                <Alert
+                  variant={AlertVariant.info}
+                  title="No analysis profiles found"
+                  isInline
+                  style={{ marginBottom: "16px" }}
+                >
+                  Create your first analysis profile to get started with migration analysis.
+                </Alert>
+                <Button
+                  variant="primary"
+                  onClick={handleCreateNewProfile}
+                  icon={<PlusIcon />}
+                  style={{ width: "100%" }}
+                >
+                  Create New Profile
+                </Button>
+              </>
             ) : (
               <>
                 <Select

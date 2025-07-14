@@ -19,6 +19,7 @@ import CheckIcon from "@patternfly/react-icons/dist/esm/icons/check-icon";
 import LockIcon from "@patternfly/react-icons/dist/esm/icons/lock-icon";
 import { AnalysisProfile } from "../../../../shared/dist/types";
 import { CogIcon } from "@patternfly/react-icons/dist/esm/icons/cog-icon";
+import { PlusIcon } from "@patternfly/react-icons/dist/esm/icons/plus-icon";
 
 interface ProfileSelectorProps {
   profiles: AnalysisProfile[];
@@ -40,10 +41,31 @@ export const ProfileSelector: React.FC<ProfileSelectorProps> = ({
   const toggleRef = useRef<MenuToggleElement>(null);
 
   const selected = profiles.find((p) => p.id === activeProfile);
+  const hasProfiles = profiles.length > 0;
 
   const filtered = searchInput.trim()
     ? profiles.filter((p) => p.name.toLowerCase().includes(searchInput.trim().toLowerCase()))
     : profiles;
+
+  // If no profiles exist, show a message with create button instead of dropdown
+  if (!hasProfiles) {
+    return (
+      <div style={{ width: 220 }}>
+        <div style={{ marginBottom: "8px", color: "#6a6e73", fontSize: "0.875rem" }}>
+          No analysis profile found
+        </div>
+        <Button
+          variant="primary"
+          onClick={onManageProfiles}
+          icon={<PlusIcon />}
+          style={{ width: "100%" }}
+          isDisabled={isDisabled}
+        >
+          Create New Profile
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <Dropdown
