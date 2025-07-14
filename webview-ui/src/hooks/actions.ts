@@ -44,6 +44,11 @@ export const getSolution = (
   payload: { incidents, effort },
 });
 
+export const getSuccessRate = (): WebviewAction<WebviewActionType, unknown> => ({
+  type: "GET_SUCCESS_RATE",
+  payload: {},
+});
+
 export const getSolutionWithAksMigrateContext = (
   incident: EnhancedIncident,
 ): WebviewAction<WebviewActionType, ScopeWithAksMigrateContext> => ({
