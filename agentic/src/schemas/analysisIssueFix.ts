@@ -1,5 +1,5 @@
 import { Annotation } from "@langchain/langgraph";
-import { EnhancedIncident } from "@editor-extensions/shared";
+import { EnhancedIncident } from "@aks-migrate/shared";
 
 import { BaseInputMetaState } from "./base";
 

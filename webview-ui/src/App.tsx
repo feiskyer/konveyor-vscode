@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { viewType } from "./utils/vscode";
 import AnalysisPage from "./components/AnalysisPage/AnalysisPage";
 import ResolutionPage from "./components/ResolutionsPage/ResolutionsPage";
-import { WebviewType } from "@editor-extensions/shared";
+import { WebviewType } from "@aks-migrate/shared";
 import { ExtensionStateProvider } from "./context/ExtensionStateContext";
 import { ProfileManagerPage } from "./components/ProfileManager/ProfileManagerPage";
 import { WizardContainer } from "./components/Wizard";

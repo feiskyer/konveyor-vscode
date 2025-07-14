@@ -49,7 +49,7 @@ import { ViolationsCount } from "../ViolationsCount/ViolationsCount";
 import ViolationIncidentsList from "../ViolationIncidentsList";
 import { ProfileSelector } from "../ProfileSelector/ProfileSelector";
 import ProgressIndicator from "../ProgressIndicator";
-import { Incident, AnalysisConfig } from "@editor-extensions/shared";
+import { Incident, AnalysisConfig } from "@aks-migrate/shared";
 
 const AnalysisPage: React.FC = () => {
   const { state, dispatch } = useExtensionStateContext();

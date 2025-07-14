@@ -1,4 +1,4 @@
-import { AnalysisProfile } from "@editor-extensions/shared";
+import { AnalysisProfile } from "@aks-migrate/shared";
 
 export function getBundledProfiles(): AnalysisProfile[] {
   return [

@@ -1,4 +1,4 @@
-import { RuleSet, Violation, EnhancedViolation } from "@editor-extensions/shared";
+import { RuleSet, Violation, EnhancedViolation } from "@aks-migrate/shared";
 import { useMemo } from "react";
 
 export function useViolations(analysisResults: RuleSet[] | undefined): EnhancedViolation[] {

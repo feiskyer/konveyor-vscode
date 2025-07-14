@@ -27,7 +27,7 @@
  *  SOFTWARE.
  *--------------------------------------------------------------------------------------------*/
 
-import { Incident, RuleSet, Violation, groupIncidentsByMsg } from "@editor-extensions/shared";
+import { Incident, RuleSet, Violation, groupIncidentsByMsg } from "@aks-migrate/shared";
 import { Immutable } from "immer";
 import * as vscode from "vscode";
 import { allIncidents } from "./transformation";

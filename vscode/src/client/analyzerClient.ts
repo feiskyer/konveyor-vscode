@@ -4,13 +4,7 @@ import path from "node:path";
 import * as fs from "fs-extra";
 import * as vscode from "vscode";
 import * as rpc from "vscode-jsonrpc/node";
-import {
-  ExtensionData,
-  RuleSet,
-  ServerState,
-  SolutionState,
-  Violation,
-} from "@editor-extensions/shared";
+import { ExtensionData, RuleSet, ServerState, SolutionState, Violation } from "@aks-migrate/shared";
 import { paths, fsPaths, ignoresToExcludedPaths } from "../paths";
 import { Extension } from "../helpers/Extension";
 import { buildAssetPaths, AssetPaths } from "./paths";

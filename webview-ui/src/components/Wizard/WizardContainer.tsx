@@ -17,7 +17,7 @@ import {
   ExclamationCircleIcon,
   InProgressIcon,
 } from "@patternfly/react-icons";
-import { WizardStep as KonveyorWizardStep } from "@editor-extensions/shared";
+import { WizardStep as KonveyorWizardStep } from "@aks-migrate/shared";
 import { useExtensionStateContext } from "../../context/ExtensionStateContext";
 import { SetupStep } from "./SetupStep";
 import { ProfileStep } from "./ProfileStep";

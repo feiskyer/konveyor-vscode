@@ -2,11 +2,11 @@ import * as vscode from "vscode";
 import { AksMigrateGUIWebviewViewProvider } from "./AksMigrateGUIWebviewViewProvider";
 import { registerAllCommands as registerAllCommands } from "./commands";
 import { ExtensionState } from "./extensionState";
-import { ExtensionData } from "@editor-extensions/shared";
-import { SimpleInMemoryCache } from "@editor-extensions/agentic";
+import { ExtensionData } from "@aks-migrate/shared";
+import { SimpleInMemoryCache } from "@aks-migrate/agentic";
 import { ViolationCodeActionProvider } from "./ViolationCodeActionProvider";
 import { AnalyzerClient } from "./client/analyzerClient";
-import { SolutionServerClient } from "@editor-extensions/agentic";
+import { SolutionServerClient } from "@aks-migrate/agentic";
 import { AksMigrateFileModel, registerDiffView } from "./diffView";
 import { MemFS } from "./data";
 import { Immutable, produce } from "immer";
@@ -27,7 +27,7 @@ import {
   migrateGlobalProfilesToProject,
 } from "./utilities/profiles/profileService";
 import { DiagnosticTaskManager } from "./taskManager/taskManager";
-import { WizardStep } from "@editor-extensions/shared";
+import { WizardStep } from "@aks-migrate/shared";
 
 class VsCodeExtension {
   private state: ExtensionState;

@@ -1,5 +1,5 @@
 import { type RunnableConfig } from "@langchain/core/runnables";
-import { type EnhancedIncident } from "@editor-extensions/shared";
+import { type EnhancedIncident } from "@aks-migrate/shared";
 import { type AIMessageChunk, type AIMessage } from "@langchain/core/messages";
 import { type BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { SolutionServerClient } from "./clients/solutionServerClient";

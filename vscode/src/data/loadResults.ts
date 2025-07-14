@@ -6,7 +6,7 @@ import {
   RuleSet,
   Scope,
   Solution,
-} from "@editor-extensions/shared";
+} from "@aks-migrate/shared";
 import { processIncidents } from "./analyzerResults";
 import { ExtensionState } from "src/extensionState";
 import { writeDataFile } from "./storage";

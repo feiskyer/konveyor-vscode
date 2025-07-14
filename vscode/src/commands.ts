@@ -26,14 +26,14 @@ import {
   SolutionEffortLevel,
   ChatMessageType,
   GetSolutionResult,
-} from "@editor-extensions/shared";
+} from "@aks-migrate/shared";
 import {
   type KaiModifiedFile,
   type KaiWorkflowMessage,
   KaiWorkflowMessageType,
   KaiInteractiveWorkflow,
   type KaiInteractiveWorkflowInput,
-} from "@editor-extensions/agentic";
+} from "@aks-migrate/agentic";
 import {
   applyAll,
   discardAll,

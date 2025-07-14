@@ -1,4 +1,4 @@
-import { Incident, RuleSet } from "@editor-extensions/shared";
+import { Incident, RuleSet } from "@aks-migrate/shared";
 import { produce } from "immer";
 import { FOO } from "../../analysis/__tests__/data";
 import { allIncidents } from "../transformation";

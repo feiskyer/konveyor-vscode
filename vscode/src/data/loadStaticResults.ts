@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { RuleSet } from "@editor-extensions/shared";
+import { RuleSet } from "@aks-migrate/shared";
 import { loadStateFromDataFolder, readDataFiles } from "./storage";
 import { paths } from "../paths";
 

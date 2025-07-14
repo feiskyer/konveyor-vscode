@@ -16,7 +16,7 @@ import {
   FileIcon,
   EyeIcon,
 } from "@patternfly/react-icons";
-import { LocalChange } from "@editor-extensions/shared";
+import { LocalChange } from "@aks-migrate/shared";
 import * as path from "path-browserify";
 import "./fileChanges.css";
 interface FileChangesProps {

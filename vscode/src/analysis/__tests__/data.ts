@@ -1,4 +1,4 @@
-import { RuleSet } from "@editor-extensions/shared";
+import { RuleSet } from "@aks-migrate/shared";
 export const FOO: RuleSet = {
   name: "test/foo",
   description: "foo top description",

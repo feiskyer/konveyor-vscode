@@ -1,4 +1,4 @@
-import { EnhancedIncident } from "@editor-extensions/shared";
+import { EnhancedIncident } from "@aks-migrate/shared";
 import { AIMessage, AIMessageChunk } from "@langchain/core/messages";
 import { Annotation, type MessagesAnnotation } from "@langchain/langgraph";
 import { CompiledStateGraph, END, START, StateGraph } from "@langchain/langgraph";

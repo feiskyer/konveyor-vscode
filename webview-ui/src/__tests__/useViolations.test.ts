@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react";
 import { expect } from "expect";
 import { useViolations } from "../hooks/useViolations";
-import { RuleSet } from "@editor-extensions/shared";
+import { RuleSet } from "@aks-migrate/shared";
 
 describe("useViolations hook", () => {
   it("undefined input = empty array", () => {

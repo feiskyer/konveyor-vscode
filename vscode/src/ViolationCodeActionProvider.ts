@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 import { ExtensionState } from "./extensionState";
-import { EnhancedIncident } from "@editor-extensions/shared";
+import { EnhancedIncident } from "@aks-migrate/shared";
 import { Immutable } from "immer";
-import { DiagnosticSource } from "@editor-extensions/shared";
+import { DiagnosticSource } from "@aks-migrate/shared";
 export class ViolationCodeActionProvider implements vscode.CodeActionProvider {
   static readonly providedCodeActionKinds = [vscode.CodeActionKind.QuickFix];
 

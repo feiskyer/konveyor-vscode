@@ -1,5 +1,5 @@
 import path from "path-browserify";
-import { Incident } from "@editor-extensions/shared";
+import { Incident } from "@aks-migrate/shared";
 
 export function getIncidentFile(incident: Incident): string {
   return path.basename(incident.uri.replace(/\\/g, "/"));

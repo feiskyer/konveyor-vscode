@@ -7,8 +7,8 @@ import {
   MenuToggle,
   MenuToggleAction,
 } from "@patternfly/react-core";
-import { SolutionEffortLevel } from "@editor-extensions/shared";
-import { EnhancedIncident } from "@editor-extensions/shared";
+import { SolutionEffortLevel } from "@aks-migrate/shared";
+import { EnhancedIncident } from "@aks-migrate/shared";
 import { useExtensionStateContext } from "../context/ExtensionStateContext";
 import { getSolution, getSolutionWithAksMigrateContext } from "../hooks/actions";
 import { EllipsisVIcon, WrenchIcon } from "@patternfly/react-icons";

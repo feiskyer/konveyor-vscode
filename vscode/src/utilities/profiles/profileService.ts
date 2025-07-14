@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { AnalysisProfile } from "@editor-extensions/shared";
+import { AnalysisProfile } from "@aks-migrate/shared";
 import { ExtensionState } from "../../extensionState";
 import { getBundledProfiles } from "./bundledProfiles";
 import {

@@ -2,7 +2,7 @@ import "./resolutionsPage.css";
 import React, { useEffect, useRef } from "react";
 import { Page, PageSection, PageSidebar, PageSidebarBody, Title } from "@patternfly/react-core";
 import { FileChanges } from "./FileChanges";
-import { ChatMessage, ChatMessageType, Incident, LocalChange } from "@editor-extensions/shared";
+import { ChatMessage, ChatMessageType, Incident, LocalChange } from "@aks-migrate/shared";
 import { applyFile, discardFile, openFile, viewFix } from "../../hooks/actions";
 import { IncidentTableGroup } from "../IncidentTable/IncidentTableGroup";
 import { SentMessage } from "./SentMessage";

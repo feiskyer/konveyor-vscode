@@ -1,5 +1,5 @@
 import React from "react";
-import { EnhancedIncident } from "@editor-extensions/shared";
+import { EnhancedIncident } from "@aks-migrate/shared";
 import { IncidentTable } from "./IncidentTable";
 
 export const IncidentTableGroup = ({

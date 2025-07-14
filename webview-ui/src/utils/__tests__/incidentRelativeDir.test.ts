@@ -1,5 +1,5 @@
 import { getIncidentRelativeDir } from "../incident";
-import { Incident } from "@editor-extensions/shared";
+import { Incident } from "@aks-migrate/shared";
 import { expect } from "expect";
 
 describe("getIncidentRelativeDir", () => {

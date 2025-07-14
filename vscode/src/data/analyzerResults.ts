@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
 import * as yaml from "js-yaml";
-import { RuleSet, Category, EnhancedIncident, DiagnosticSource } from "@editor-extensions/shared";
+import { RuleSet, Category, EnhancedIncident, DiagnosticSource } from "@aks-migrate/shared";
 import { Immutable } from "immer";
 
 //Assuming that output is in form of yaml

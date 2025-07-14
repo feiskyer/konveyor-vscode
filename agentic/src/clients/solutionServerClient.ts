@@ -1,6 +1,6 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
-import { EnhancedIncident, SuccessRateMetric } from "@editor-extensions/shared";
+import { EnhancedIncident, SuccessRateMetric } from "@aks-migrate/shared";
 
 export interface SolutionFile {
   uri: string;

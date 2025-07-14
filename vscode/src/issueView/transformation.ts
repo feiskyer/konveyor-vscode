@@ -1,4 +1,4 @@
-import { Incident, RuleSet, sanitizeIncidents } from "@editor-extensions/shared";
+import { Incident, RuleSet, sanitizeIncidents } from "@aks-migrate/shared";
 import { Immutable } from "immer";
 
 export const allIncidents = (ruleSets: Immutable<RuleSet[]>): Incident[] =>

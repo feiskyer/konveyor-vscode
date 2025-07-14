@@ -7,7 +7,7 @@ import {
   SolutionEffortLevel,
   WebviewAction,
   WebviewActionType,
-} from "@editor-extensions/shared";
+} from "@aks-migrate/shared";
 
 export const setExtensionData = (
   data: ExtensionData,
