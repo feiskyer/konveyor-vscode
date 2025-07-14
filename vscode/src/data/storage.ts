@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import fs from "fs";
 
-import { RuleSet, Solution } from "@editor-extensions/shared";
+import { RuleSet, Solution } from "@aks-migrate/shared";
 import {
   isAnalysis,
   isSolution,

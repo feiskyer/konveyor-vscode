@@ -34,7 +34,7 @@ import {
   WebviewActionType,
   ScopeWithAksMigrateContext,
   ExtensionData,
-} from "@editor-extensions/shared";
+} from "@aks-migrate/shared";
 
 import { getBundledProfiles } from "./utilities/profiles/bundledProfiles";
 import {

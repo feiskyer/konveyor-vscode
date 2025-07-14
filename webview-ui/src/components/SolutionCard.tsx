@@ -10,7 +10,7 @@ import {
   FlexItem,
   Divider,
 } from "@patternfly/react-core";
-import { Change } from "@editor-extensions/shared";
+import { Change } from "@aks-migrate/shared";
 
 interface SolutionCardProps {
   changes: Change[];

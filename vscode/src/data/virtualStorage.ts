@@ -1,9 +1,4 @@
-import {
-  GetSolutionResult,
-  LocalChange,
-  Solution,
-  SolutionResponse,
-} from "@editor-extensions/shared";
+import { GetSolutionResult, LocalChange, Solution, SolutionResponse } from "@aks-migrate/shared";
 import { Uri, window, workspace } from "vscode";
 import { ExtensionState } from "src/extensionState";
 import * as Diff from "diff";

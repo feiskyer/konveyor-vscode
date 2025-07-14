@@ -35,7 +35,7 @@ import {
   FilterIcon,
 } from "@patternfly/react-icons";
 import { IncidentTableGroup } from "./IncidentTable";
-import { EnhancedIncident, Incident, Category } from "@editor-extensions/shared";
+import { EnhancedIncident, Incident, Category } from "@aks-migrate/shared";
 import GetSolutionDropdown from "./GetSolutionDropdown";
 import { getIncidentFile } from "../utils/incident";
 

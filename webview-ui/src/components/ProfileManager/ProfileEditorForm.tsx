@@ -28,7 +28,7 @@ import {
   InfoCircleIcon,
 } from "@patternfly/react-icons";
 import { useExtensionStateContext } from "../../context/ExtensionStateContext";
-import { AnalysisProfile, CONFIGURE_CUSTOM_RULES } from "@editor-extensions/shared";
+import { AnalysisProfile, CONFIGURE_CUSTOM_RULES } from "@aks-migrate/shared";
 import { ConfirmDialog } from "../ConfirmDialog/ConfirmDialog";
 import { CreatableMultiSelectField } from "./CreatableMultiSelectField";
 
@@ -372,17 +372,17 @@ export function buildLabelSelector(sources: string[], targets: string[]): string
   if (!sourcesPart && !targetsPart) {
     return "(discovery)";
   }
-  
+
   // If only targets are selected, return targets OR discovery
   if (targetsPart && !sourcesPart) {
     return `(${targetsPart}) || (discovery)`;
   }
-  
+
   // If only sources are selected, return sources OR discovery
   if (sourcesPart && !targetsPart) {
     return `(${sourcesPart}) || (discovery)`;
   }
-  
+
   // If both are selected, AND sources with targets, then OR with discovery
   return `(${targetsPart}) && (${sourcesPart}) || (discovery)`;
 }

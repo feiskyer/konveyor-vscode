@@ -9,7 +9,7 @@ import {
 } from "../utilities";
 import AksMigrateReadOnlyProvider from "../data/readOnlyStorage";
 import { Immutable } from "immer";
-import { LocalChange, ExtensionData } from "@editor-extensions/shared";
+import { LocalChange, ExtensionData } from "@aks-migrate/shared";
 
 export function registerDiffView({
   extensionContext: context,

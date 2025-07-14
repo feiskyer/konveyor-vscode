@@ -1,4 +1,4 @@
-import { RuleSet } from "@editor-extensions/shared";
+import { RuleSet } from "@aks-migrate/shared";
 import { Immutable } from "immer";
 
 export const countIncidentsOnPaths = (ruleSets: Immutable<RuleSet[]>, filePaths: string[]) =>

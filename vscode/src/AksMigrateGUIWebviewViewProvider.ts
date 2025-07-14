@@ -14,7 +14,7 @@ import {
   ColorThemeKind,
 } from "vscode";
 import { getNonce } from "./utilities/getNonce";
-import { ExtensionData, WebviewType } from "@editor-extensions/shared";
+import { ExtensionData, WebviewType } from "@aks-migrate/shared";
 import { Immutable } from "immer";
 import jsesc from "jsesc";
 

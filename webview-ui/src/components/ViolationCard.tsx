@@ -10,7 +10,7 @@ import {
   Label,
   Divider,
 } from "@patternfly/react-core";
-import { Incident, Violation } from "@editor-extensions/shared";
+import { Incident, Violation } from "@aks-migrate/shared";
 
 interface ViolationCardProps {
   incident: Incident | null;

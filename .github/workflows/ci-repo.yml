@@ -200,7 +200,7 @@ jobs:
       #   uses: WebFreak001/deploy-nightly@v3.2.0
       #   if: ${{ ! (github.event_name == 'pull_request' && ! github.event.pull_request.merged) }}
       #   with:
-      #     upload_url: https://uploads.github.com/repos/konveyor/editor-extensions/releases/223723085/assets{?name,label}
+      #     upload_url: https://uploads.github.com/repos/Azure/aks-migrate/releases/223723085/assets{?name,label}
       #     release_id: 223723085
       #     asset_path: ./dist/konveyor-ai.vsix
       #     asset_name: konveyor-ai-${{ steps.set_time.outputs.vsix_suffix }}.vsix
@@ -211,9 +211,9 @@ jobs:
       #   if: ${{ ! (github.event_name == 'pull_request' && ! github.event.pull_request.merged) }}
       #   run: |
       #     c=1
-      #     for i in $(gh release view -R konveyor/editor-extensions development-builds --json assets | jq -r .assets[].name | sort -r); do
+      #     for i in $(gh release view -R Azure/aks-migrate development-builds --json assets | jq -r .assets[].name | sort -r); do
       #       if [ "$c" -gt 7 ]; then
-      #         gh release delete-asset -y -R konveyor/editor-extensions development-builds $i
+      #         gh release delete-asset -y -R Azure/aks-migrate development-builds $i
       #       fi
       #       c=$((c+1))
       #     done

@@ -2,7 +2,7 @@ import { ExtensionState } from "src/extensionState";
 import * as vscode from "vscode";
 import { FileItem, IncidentTypeItem, IssuesTreeDataProvider, ReferenceItem } from "./issueModel";
 import { Immutable } from "immer";
-import { ExtensionData, RuleSet } from "@editor-extensions/shared";
+import { ExtensionData, RuleSet } from "@aks-migrate/shared";
 import { expandAll, expandChildren } from "./expandCommands";
 
 export function registerIssueView({

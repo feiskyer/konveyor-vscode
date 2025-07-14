@@ -1,6 +1,6 @@
 // utils/vscodeMessaging.ts
 
-import { WebviewAction, WebviewActionType } from "@editor-extensions/shared";
+import { WebviewAction, WebviewActionType } from "@aks-migrate/shared";
 import { vscode } from "./vscode";
 
 export const sendVscodeMessage = (message: WebviewAction<WebviewActionType, unknown>) =>

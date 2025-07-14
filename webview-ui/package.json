@@ -1,5 +1,5 @@
 {
-  "name": "@editor-extensions/webview-ui",
+  "name": "@aks-migrate/webview-ui",
   "version": "0.1.0",
   "private": true,
   "type": "module",

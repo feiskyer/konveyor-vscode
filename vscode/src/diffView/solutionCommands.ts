@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { ExtensionState } from "src/extensionState";
 import { fromRelativeToAksMigrate, AKS_MIGRATE_READ_ONLY_SCHEME } from "../utilities";
 import { FileItem, toUri } from "./fileModel";
-import { LocalChange } from "@editor-extensions/shared";
+import { LocalChange } from "@aks-migrate/shared";
 import { Immutable } from "immer";
 import { getConfigDiffEditorType } from "../utilities";
 

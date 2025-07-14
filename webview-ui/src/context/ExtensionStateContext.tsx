@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, PropsWithChildren } from "react";
-import { ExtensionData, WebviewAction, WebviewActionType, WizardStep } from "@editor-extensions/shared";
+import { ExtensionData, WebviewAction, WebviewActionType, WizardStep } from "@aks-migrate/shared";
 import { sendVscodeMessage as dispatch } from "../utils/vscodeMessaging";
 
 const defaultState: ExtensionData = {

@@ -1,4 +1,4 @@
-import { GetSolutionResult, RuleSet, Solution, SolutionResponse } from "@editor-extensions/shared";
+import { GetSolutionResult, RuleSet, Solution, SolutionResponse } from "@aks-migrate/shared";
 import { Uri } from "vscode";
 
 const isString = (obj: unknown): obj is string => typeof obj === "string";

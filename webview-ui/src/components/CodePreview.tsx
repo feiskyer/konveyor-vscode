@@ -1,6 +1,6 @@
 import React from "react";
 import { Content, CodeBlock, CodeBlockCode } from "@patternfly/react-core";
-import { Incident } from "@editor-extensions/shared";
+import { Incident } from "@aks-migrate/shared";
 
 interface CodePreviewProps {
   incident: Incident;

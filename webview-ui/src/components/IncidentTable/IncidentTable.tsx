@@ -1,7 +1,7 @@
 import "./incidentTable.css";
 import React, { FC } from "react";
 import { Button, Card, CardBody, CardHeader } from "@patternfly/react-core";
-import { EnhancedIncident } from "@editor-extensions/shared";
+import { EnhancedIncident } from "@aks-migrate/shared";
 import { Table, Thead, Tr, Th, Tbody, Td, TableText } from "@patternfly/react-table";
 import Markdown from "react-markdown";
 import { getIncidentRelativePath } from "../../utils/incident";

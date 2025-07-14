@@ -13,7 +13,7 @@ import {
   effortLevels,
   getEffortValue,
   SolutionEffortLevel,
-} from "@editor-extensions/shared";
+} from "@aks-migrate/shared";
 
 function getConfigValue<T>(key: string): T | undefined {
   return vscode.workspace.getConfiguration(AKS_MIGRATE_CONFIG_KEY)?.get<T>(key);

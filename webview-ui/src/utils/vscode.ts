@@ -1,4 +1,4 @@
-import { WebviewType } from "@editor-extensions/shared";
+import { WebviewType } from "@aks-migrate/shared";
 
 // vscode.ts
 export interface VscodeApi {
