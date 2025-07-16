@@ -93,7 +93,7 @@ The **AKS Migrate** VSCode extension assists with container‑focused applicati
 
 ### Wizard‑based UI (new)
 
-As part of the UX overhaul tracked in `PLAN.md`, the traditional multi‑view interface has been replaced by a **single, four‑step wizard**. The steps are:
+The traditional multi‑view interface has been replaced by a **single, four‑step wizard**. The steps are:
 
 1. Setup – verifies LLM provider credentials
 2. Profile – pick or create an analysis profile
