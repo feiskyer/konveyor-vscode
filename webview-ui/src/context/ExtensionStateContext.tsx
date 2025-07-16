@@ -8,6 +8,7 @@ const defaultState: ExtensionData = {
   enhancedIncidents: [],
   resolutionPanelData: undefined,
   isAnalyzing: false,
+  analysisProgress: 0,
   isFetchingSolution: false,
   isStartingServer: false,
   isAnalysisScheduled: false,

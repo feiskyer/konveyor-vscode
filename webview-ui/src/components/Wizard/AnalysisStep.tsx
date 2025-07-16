@@ -23,6 +23,7 @@ export const AnalysisStep: React.FC = () => {
   const { state, dispatch } = useExtensionStateContext();
   const {
     isAnalyzing,
+    analysisProgress,
     isStartingServer,
     serverState,
     ruleSets,
@@ -162,6 +163,8 @@ export const AnalysisStep: React.FC = () => {
                 </Alert>
 
                 <Progress
+                  value={analysisProgress}
+                  title="Analysis Progress"
                   style={{ marginBottom: "16px" }}
                 />
 
