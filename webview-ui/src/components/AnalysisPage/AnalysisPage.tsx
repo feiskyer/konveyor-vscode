@@ -56,6 +56,7 @@ const AnalysisPage: React.FC = () => {
 
   const {
     isAnalyzing,
+    analysisProgress,
     isStartingServer,
     isFetchingSolution: isWaitingForSolution,
     ruleSets: analysisResults,
@@ -296,7 +297,7 @@ const AnalysisPage: React.FC = () => {
                       </Flex>
                     </CardHeader>
                     <CardBody>
-                      {isAnalyzing && <ProgressIndicator progress={50} />}
+                      {isAnalyzing && <ProgressIndicator progress={analysisProgress} />}
                       {!isAnalyzing && !hasViolations && (
                         <EmptyState variant="sm">
                           <Title

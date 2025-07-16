@@ -175,6 +175,7 @@ export interface ExtensionData {
   enhancedIncidents: EnhancedIncident[];
   resolutionPanelData: any;
   isAnalyzing: boolean;
+  analysisProgress: number;
   isFetchingSolution: boolean;
   isStartingServer: boolean;
   isContinueInstalled: boolean;

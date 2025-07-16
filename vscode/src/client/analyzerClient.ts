@@ -61,6 +61,16 @@ export class AnalyzerClient {
   private fireAnalysisStateChange(flag: boolean) {
     this.mutateExtensionData((draft) => {
       draft.isAnalyzing = flag;
+      if (!flag) {
+        // Reset progress when analysis finishes
+        draft.analysisProgress = 0;
+      }
+    });
+  }
+
+  private fireAnalysisProgressChange(progress: number) {
+    this.mutateExtensionData((draft) => {
+      draft.analysisProgress = Math.max(0, Math.min(100, progress));
     });
   }
 
@@ -329,8 +339,10 @@ export class AnalyzerClient {
       },
       async (progress, token) => {
         try {
-          progress.report({ message: "Running..." });
+          progress.report({ message: "Starting analysis..." });
           this.fireAnalysisStateChange(true);
+          this.fireAnalysisProgressChange(10);
+
           const activeProfile = this.getExtStateData().profiles.find(
             (p) => p.id === this.getExtStateData().activeProfileId,
           );
@@ -346,6 +358,9 @@ export class AnalyzerClient {
             this.fireAnalysisStateChange(false);
             return;
           }
+
+          progress.report({ message: "Preparing analysis request..." });
+          this.fireAnalysisProgressChange(25);
 
           const requestParams = {
             label_selector: activeProfile.labelSelector,
@@ -364,6 +379,9 @@ export class AnalyzerClient {
             this.fireAnalysisStateChange(false);
             return;
           }
+
+          progress.report({ message: "Analyzing code..." });
+          this.fireAnalysisProgressChange(50);
 
           const cancellationPromise = new Promise((resolve) => {
             token.onCancellationRequested(() => {
@@ -384,6 +402,10 @@ export class AnalyzerClient {
             this.fireAnalysisStateChange(false);
             return;
           }
+
+          progress.report({ message: "Processing results..." });
+          this.fireAnalysisProgressChange(75);
+
           const isResponseWellFormed = isAnalysisResponse(rawResponse?.Rulesets);
           const ruleSets: RuleSet[] = isResponseWellFormed ? rawResponse?.Rulesets : [];
           const summary = isResponseWellFormed
@@ -422,6 +444,9 @@ export class AnalyzerClient {
             vscode.window.showInformationMessage("Analysis completed. No incidents were found.");
           }
 
+          progress.report({ message: "Finalizing results..." });
+          this.fireAnalysisProgressChange(90);
+
           // Add active profile name to each RuleSet
           const currentProfile = this.getExtStateData().profiles.find(
             (p) => p.id === this.getExtStateData().activeProfileId,
@@ -434,7 +459,10 @@ export class AnalyzerClient {
 
           await vscode.commands.executeCommand("aksmigrate.loadRuleSets", ruleSets);
           this.taskManager.init();
-          progress.report({ message: "Results processed!" });
+
+          progress.report({ message: "Analysis completed!" });
+          this.fireAnalysisProgressChange(100);
+
           vscode.window.showInformationMessage("Analysis completed successfully!");
         } catch (err: any) {
           this.outputChannel.appendLine(`Error during analysis: ${err.message}`);
