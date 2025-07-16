@@ -23,6 +23,23 @@ export const loadRuleSets = async (state: ExtensionState, receivedRuleSets: Rule
   const enhancedIncidents = enhanceIncidentsFromRuleSets(receivedRuleSets);
 
   state.mutateData((draft) => {
+    // Create a map of existing resolved incidents to preserve their status
+    const resolvedIncidentsMap = new Map<string, boolean>();
+    draft.enhancedIncidents.forEach((incident) => {
+      if (incident.resolved) {
+        const key = `${incident.violationId}:${incident.uri}:${incident.lineNumber || "unknown"}`;
+        resolvedIncidentsMap.set(key, true);
+      }
+    });
+
+    // Apply resolved status to new incidents that match existing resolved ones
+    enhancedIncidents.forEach((incident) => {
+      const key = `${incident.violationId}:${incident.uri}:${incident.lineNumber || "unknown"}`;
+      if (resolvedIncidentsMap.has(key)) {
+        incident.resolved = true;
+      }
+    });
+
     draft.ruleSets = receivedRuleSets;
     draft.enhancedIncidents = enhancedIncidents;
 

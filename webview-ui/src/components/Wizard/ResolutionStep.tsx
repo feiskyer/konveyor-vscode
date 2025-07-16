@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardTitle,
@@ -21,7 +21,6 @@ import {
 } from "@patternfly/react-core";
 import { CheckCircleIcon } from "@patternfly/react-icons";
 import { useExtensionStateContext } from "../../context/ExtensionStateContext";
-import { FileChanges } from "../ResolutionsPage/FileChanges";
 import { getSolution } from "../../hooks/actions";
 
 export const ResolutionStep: React.FC = () => {
@@ -29,56 +28,61 @@ export const ResolutionStep: React.FC = () => {
   const { 
     enhancedIncidents, 
     isFetchingSolution, 
-    solutionData,
-    localChanges,
     wizardState 
   } = state;
 
   const [selectedIncidents, setSelectedIncidents] = useState<string[]>([]);
   
+  // Generate unique keys for incidents - MUST match the format used in loadResults.ts
+  const generateIncidentKey = (incident: any) => {
+    // Use the same 3-part key format as the backend preservation logic
+    return `${incident.violationId}:${incident.uri}:${incident.lineNumber || 'unknown'}`;
+  };
+
+  // Initialize selected incidents from wizard state on mount and when wizard state changes
+  useEffect(() => {
+    // Don't use wizard state for now, just clear selection when component mounts
+    // This ensures fresh state when view is reactivated
+    setSelectedIncidents([]);
+  }, []);
+
+  // Filter unresolved and resolved incidents into separate arrays
+  const unresolvedIncidents = enhancedIncidents.filter(incident => !incident.resolved);
+  const resolvedIncidents = enhancedIncidents.filter(incident => incident.resolved);
+  
   // const selectedIncidentObjects = wizardState.stepData.resolution.selectedIncidents;
   const solutionApplied = wizardState.stepData.resolution.solutionApplied;
   
   const hasIncidents = enhancedIncidents.length > 0;
-  const hasSolution = solutionData !== undefined;
-  const hasLocalChanges = localChanges.length > 0;
 
-  const handleIncidentSelection = (incidentId: string, checked: boolean) => {
+  const handleIncidentSelection = (incidentKey: string, checked: boolean) => {
+    // The incidentKey is generated from unresolvedIncidents array with index
+    // So we just need to validate it exists in our selected incidents state
     if (checked) {
-      setSelectedIncidents(prev => [...prev, incidentId]);
+      setSelectedIncidents(prev => [...prev, incidentKey]);
     } else {
-      setSelectedIncidents(prev => prev.filter(id => id !== incidentId));
+      setSelectedIncidents(prev => prev.filter(key => key !== incidentKey));
     }
   };
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedIncidents(enhancedIncidents.map(incident => incident.violationId));
+      const keys = unresolvedIncidents.map((incident) => {
+        return generateIncidentKey(incident);
+      });
+      setSelectedIncidents(keys);
     } else {
       setSelectedIncidents([]);
     }
   };
 
   const handleGetSolution = () => {
-    const incidents = enhancedIncidents.filter(incident => 
-      selectedIncidents.includes(incident.violationId)
+    // Filter to only include unresolved incidents that are selected
+    const incidents = unresolvedIncidents.filter(incident => 
+      selectedIncidents.includes(generateIncidentKey(incident))
     );
     
     dispatch(getSolution(incidents, "Low"));
-  };
-
-  const handleApplyAllChanges = () => {
-    // Apply each local change individually
-    localChanges.forEach(change => {
-      dispatch({ type: "APPLY_FILE", payload: change });
-    });
-  };
-
-  const handleDiscardAllChanges = () => {
-    // Discard each local change individually
-    localChanges.forEach(change => {
-      dispatch({ type: "DISCARD_FILE", payload: change });
-    });
   };
 
   if (!hasIncidents) {
@@ -130,42 +134,44 @@ export const ResolutionStep: React.FC = () => {
             <FlexItem>
               Migration Issues 
               <Label style={{ marginLeft: "8px" }}>
-                {enhancedIncidents.length}
+                {unresolvedIncidents.length}
               </Label>
             </FlexItem>
             <FlexItem>
               <Checkbox
                 id="select-all"
                 label="Select All"
-                isChecked={selectedIncidents.length === enhancedIncidents.length}
+                isChecked={selectedIncidents.length === unresolvedIncidents.length && unresolvedIncidents.length > 0}
                 onChange={(_, checked) => handleSelectAll(checked)}
-                isDisabled={isFetchingSolution}
+                isDisabled={isFetchingSolution || unresolvedIncidents.length === 0}
               />
             </FlexItem>
           </Flex>
         </CardTitle>
         <CardBody>
           <DataList aria-label="Migration issues list">
-            {enhancedIncidents.map((incident, index) => (
-              <DataListItem key={incident.violationId} aria-labelledby={`incident-${index}`}>
-                <DataListItemRow>
-                  <DataListItemCells
-                    dataListCells={[
-                      <DataListCell key="checkbox" width={1}>
-                        <Checkbox
-                          id={`incident-${incident.violationId}`}
-                          isChecked={selectedIncidents.includes(incident.violationId)}
-                          onChange={(_, checked) => 
-                            handleIncidentSelection(incident.violationId, checked)
-                          }
-                          isDisabled={isFetchingSolution}
-                        />
-                      </DataListCell>,
-                      <DataListCell key="details" width={5}>
-                        <div>
-                          <h4>
-                            {incident.violation_name || incident.message}
-                          </h4>
+            {unresolvedIncidents.map((incident, index) => {
+              const incidentKey = generateIncidentKey(incident);
+              return (
+                <DataListItem key={`${incidentKey}-${index}`} aria-labelledby={`incident-${index}`}>
+                  <DataListItemRow>
+                    <DataListItemCells
+                      dataListCells={[
+                        <DataListCell key="checkbox" width={1}>
+                          <Checkbox
+                            id={`incident-${incidentKey}`}
+                            isChecked={selectedIncidents.includes(incidentKey)}
+                            onChange={(_, checked) => 
+                              handleIncidentSelection(incidentKey, checked)
+                            }
+                            isDisabled={isFetchingSolution}
+                          />
+                        </DataListCell>,
+                        <DataListCell key="details" width={5}>
+                          <div>
+                            <h4>
+                              {incident.violation_name || incident.message}
+                            </h4>
                           <p>
                             <strong>File:</strong> {incident.uri}
                             {incident.lineNumber && (
@@ -194,7 +200,8 @@ export const ResolutionStep: React.FC = () => {
                   />
                 </DataListItemRow>
               </DataListItem>
-            ))}
+              );
+            })}
           </DataList>
 
           <Flex style={{ marginTop: "20px" }}>
@@ -241,54 +248,75 @@ export const ResolutionStep: React.FC = () => {
         </Card>
       )}
 
-      {hasSolution && hasLocalChanges && (
+      {resolvedIncidents.length > 0 && (
         <Card style={{ marginTop: "20px" }}>
           <CardTitle>
             <Flex justifyContent={{ default: "justifyContentSpaceBetween" }}>
               <FlexItem>
-                Proposed Changes
-                <Label style={{ marginLeft: "8px" }}>
-                  {localChanges.length}
+                Resolved Issues
+                <Label color="green" style={{ marginLeft: "8px" }}>
+                  {resolvedIncidents.length}
                 </Label>
-              </FlexItem>
-              <FlexItem>
-                <Flex>
-                  <FlexItem>
-                    <Button
-                      variant="primary"
-                      onClick={handleApplyAllChanges}
-                      size="sm"
-                    >
-                      Apply All
-                    </Button>
-                  </FlexItem>
-                  <FlexItem>
-                    <Button
-                      variant="secondary"
-                      onClick={handleDiscardAllChanges}
-                      size="sm"
-                    >
-                      Discard All
-                    </Button>
-                  </FlexItem>
-                </Flex>
               </FlexItem>
             </Flex>
           </CardTitle>
           <CardBody>
-            <Alert
-              variant={AlertVariant.success}
-              title="Solution generated successfully"
-              isInline
-              style={{ marginBottom: "16px" }}
-            >
-              Review the proposed changes and apply them to your codebase.
-            </Alert>
-            
-            <FileChanges 
-              changes={localChanges}
-              onFileClick={() => {}}
-            />
+            <DataList aria-label="Resolved issues list">
+              {resolvedIncidents.map((incident, index) => {
+                const incidentKey = generateIncidentKey(incident);
+                return (
+                  <DataListItem key={`${incidentKey}-resolved-${index}`} aria-labelledby={`resolved-incident-${index}`}>
+                    <DataListItemRow>
+                      <DataListItemCells
+                        dataListCells={[
+                          <DataListCell key="status" width={1}>
+                            <CheckCircleIcon 
+                              color="var(--pf-global--success-color--100)" 
+                              style={{ fontSize: "18px" }}
+                            />
+                          </DataListCell>,
+                          <DataListCell key="details" width={5}>
+                            <div style={{ opacity: 0.8 }}>
+                              <h4>
+                                {incident.violation_name || incident.message}
+                                <Label 
+                                  color="green" 
+                                  style={{ marginLeft: "8px", fontSize: "12px" }}
+                                >
+                                  Resolved
+                                </Label>
+                              </h4>
+                              <p>
+                                <strong>File:</strong> {incident.uri}
+                                {incident.lineNumber && (
+                                  <span> (Line {incident.lineNumber})</span>
+                                )}
+                              </p>
+                              {incident.violation_description && (
+                                <small>
+                                  {incident.violation_description}
+                                </small>
+                              )}
+                              {incident.violation_category && (
+                                <Label 
+                                  style={{ 
+                                    marginTop: "4px",
+                                    backgroundColor: incident.violation_category === "mandatory" ? "var(--pf-global--danger-color--100)" : "var(--pf-global--info-color--100)",
+                                    color: "white"
+                                  }}
+                                >
+                                  {incident.violation_category}
+                                </Label>
+                              )}
+                            </div>
+                          </DataListCell>,
+                        ]}
+                      />
+                    </DataListItemRow>
+                  </DataListItem>
+                );
+              })}
+            </DataList>
           </CardBody>
         </Card>
       )}

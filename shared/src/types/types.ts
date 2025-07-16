@@ -81,6 +81,7 @@ export interface EnhancedIncident extends Incident {
   violation_category?: Category;
   violation_labels?: string[];
   successRateMetric?: SuccessRateMetric;
+  resolved?: boolean;
 }
 
 export interface RuleSet {

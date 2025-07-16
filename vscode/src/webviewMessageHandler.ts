@@ -181,9 +181,26 @@ const actions: {
       true,
     );
 
-    // Update wizard state to mark that solutions have been applied
+    // Update wizard state and mark associated incidents as resolved
     state.mutateData((draft) => {
       draft.wizardState.stepData.resolution.solutionApplied = true;
+
+      // Mark incidents as resolved if they were part of the current solution scope
+      if (draft.solutionScope?.incidents) {
+        const solutionIncidentKeys = new Set(
+          draft.solutionScope.incidents.map(
+            (incident) =>
+              `${incident.violationId}:${incident.uri}:${incident.lineNumber || "unknown"}`,
+          ),
+        );
+
+        draft.enhancedIncidents.forEach((incident) => {
+          const incidentKey = `${incident.violationId}:${incident.uri}:${incident.lineNumber || "unknown"}`;
+          if (solutionIncidentKeys.has(incidentKey)) {
+            incident.resolved = true;
+          }
+        });
+      }
     });
   },
   [DISCARD_FILE](change: LocalChange) {
