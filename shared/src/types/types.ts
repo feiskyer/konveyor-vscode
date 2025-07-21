@@ -8,6 +8,8 @@ export enum WizardStep {
   Profile = "profile",
   Analysis = "analysis",
   Resolution = "resolution",
+  Containerization = "containerization",
+  Deploy = "deploy",
 }
 
 export interface WizardState {
@@ -30,6 +32,18 @@ export interface WizardState {
     resolution: {
       selectedIncidents: EnhancedIncident[];
       solutionApplied: boolean;
+    };
+    containerization: {
+      dockerfileGenerated: boolean;
+      k8sConfigsGenerated: boolean;
+      deploymentReady: boolean;
+      isQuarkusProject: boolean;
+      hasKubernetesExtension: boolean;
+    };
+    deploy: {
+      selectedStakeholders: string[];
+      deploymentTarget: string;
+      deploymentComplete: boolean;
     };
   };
 }

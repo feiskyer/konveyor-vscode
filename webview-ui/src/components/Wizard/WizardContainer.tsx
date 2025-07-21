@@ -1,28 +1,25 @@
 import React from "react";
 import {
   Card,
-  CardHeader,
-  CardTitle,
   CardBody,
   Button,
   Flex,
   FlexItem,
   Title,
-  Progress,
-  ProgressStep,
   Icon,
 } from "@patternfly/react-core";
 import {
   CheckCircleIcon,
-  ExclamationCircleIcon,
   InProgressIcon,
 } from "@patternfly/react-icons";
-import { WizardStep as KonveyorWizardStep } from "@aks-migrate/shared";
+import { WizardStep as KonveyorWizardStep } from "../../../../shared/src/types/types";
 import { useExtensionStateContext } from "../../context/ExtensionStateContext";
 import { SetupStep } from "./SetupStep";
 import { ProfileStep } from "./ProfileStep";
 import { AnalysisStep } from "./AnalysisStep";
 import { ResolutionStep } from "./ResolutionStep";
+import { ContainerizationStep } from "./ContainerizationStep";
+import { DeployStep } from "./DeployStep";
 import "./wizard.css";
 
 export const WizardContainer: React.FC = () => {
@@ -30,10 +27,10 @@ export const WizardContainer: React.FC = () => {
   const { wizardState, configErrors, activeProfileId, enhancedIncidents } = state;
 
   const providerKeyMissing = configErrors.some(
-    (error) => error.type === "provider-key-missing",
+    (error: any) => error.type === "provider-key-missing",
   );
   const providerNotConfigured = configErrors.some(
-    (error) => error.type === "provider-not-configured",
+    (error: any) => error.type === "provider-not-configured",
   );
 
   const handleNext = () => {
@@ -55,10 +52,18 @@ export const WizardContainer: React.FC = () => {
         // Allow navigation when analysis is completed, regardless of incidents found
         return wizardState.stepData.analysis.analysisCompleted;
       case KonveyorWizardStep.Resolution:
-        // Enable finish when: no issues found OR solutions have been applied
+        // Allow navigation when: no issues found OR solutions have been applied
         const noIssuesFound = enhancedIncidents.length === 0;
         const solutionsApplied = wizardState.stepData.resolution.solutionApplied;
         return noIssuesFound || solutionsApplied;
+      case KonveyorWizardStep.Containerization:
+        // Allow navigation when containerization is ready
+        const containerizationData = wizardState.stepData.containerization;
+        return containerizationData?.deploymentReady || false;
+      case KonveyorWizardStep.Deploy:
+        // Allow finish when deployment is complete
+        const deployData = wizardState.stepData.deploy;
+        return deployData?.deploymentComplete || false;
       default:
         return false;
     }
@@ -78,6 +83,10 @@ export const WizardContainer: React.FC = () => {
         return <AnalysisStep />;
       case KonveyorWizardStep.Resolution:
         return <ResolutionStep />;
+      case KonveyorWizardStep.Containerization:
+        return <ContainerizationStep />;
+      case KonveyorWizardStep.Deploy:
+        return <DeployStep />;
       default:
         return <SetupStep />;
     }
@@ -89,6 +98,8 @@ export const WizardContainer: React.FC = () => {
       KonveyorWizardStep.Profile,
       KonveyorWizardStep.Analysis,
       KonveyorWizardStep.Resolution,
+      KonveyorWizardStep.Containerization,
+      KonveyorWizardStep.Deploy,
     ];
     return steps.indexOf(wizardState.currentStep) + 1;
   };
@@ -103,6 +114,10 @@ export const WizardContainer: React.FC = () => {
         return "Analysis";
       case KonveyorWizardStep.Resolution:
         return "Resolution";
+      case KonveyorWizardStep.Containerization:
+        return "Containerization";
+      case KonveyorWizardStep.Deploy:
+        return "Deploy";
       default:
         return step;
     }
@@ -115,6 +130,8 @@ export const WizardContainer: React.FC = () => {
       KonveyorWizardStep.Profile,
       KonveyorWizardStep.Analysis,
       KonveyorWizardStep.Resolution,
+      KonveyorWizardStep.Containerization,
+      KonveyorWizardStep.Deploy,
     ].indexOf(step);
 
     if (stepIndex < currentStepIndex) {
@@ -122,10 +139,6 @@ export const WizardContainer: React.FC = () => {
     } else if (stepIndex === currentStepIndex) {
       return "current";
     } else {
-      // Check if this is the Analysis step and analysis is completed
-      // if (step === KonveyorWizardStep.Analysis && wizardState.stepData.analysis.analysisCompleted) {
-      //   return "completed";
-      // }
       return "pending";
     }
   };
@@ -136,6 +149,8 @@ export const WizardContainer: React.FC = () => {
       KonveyorWizardStep.Profile,
       KonveyorWizardStep.Analysis,
       KonveyorWizardStep.Resolution,
+      KonveyorWizardStep.Containerization,
+      KonveyorWizardStep.Deploy,
     ];
 
     return (
@@ -214,7 +229,7 @@ export const WizardContainer: React.FC = () => {
               isDisabled={!canNavigateForward()}
               className="wizard-nav-button"
             >
-              {wizardState.currentStep === KonveyorWizardStep.Resolution ? "Finish" : "Next"}
+              {wizardState.currentStep === KonveyorWizardStep.Deploy ? "Finish" : "Next"}
             </Button>
           </FlexItem>
         </Flex>

@@ -45,6 +45,18 @@ const defaultState: ExtensionData = {
         selectedIncidents: [],
         solutionApplied: false,
       },
+      containerization: {
+        dockerfileGenerated: false,
+        k8sConfigsGenerated: false,
+        deploymentReady: false,
+        isQuarkusProject: false,
+        hasKubernetesExtension: false,
+      },
+      deploy: {
+        selectedStakeholders: [],
+        deploymentTarget: "development",
+        deploymentComplete: false,
+      },
     },
   },
 };
