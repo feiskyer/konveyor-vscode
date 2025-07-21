@@ -138,7 +138,7 @@ The base use case to download everything from the default release locations:
 npm run collect-assets
 ```
 
-To download from a specific release `v01.0-special.0`:
+To download from a specific release `v0.1.0-special.0`:
 
 ```bash
 npm run collect-assets -- --release-tag=v0.1.0-special.0
@@ -165,7 +165,7 @@ To download from the latest successful build workflow for a specific PR:
 GITHUB_TOKEN=$(gh auth token) npm run collect-assets -- --use-workflow-artifacts --pr=123
 ```
 
-### GITHUB_TOKEN for collect-assets
+### `GITHUB_TOKEN` for collect-assets
 
 Using a `GITHUB_TOKEN` is good to avoid rate limiting when downloading from the releases,
 and to allow the download of workflow artifacts. Workflow artifacts may only be downloaded
