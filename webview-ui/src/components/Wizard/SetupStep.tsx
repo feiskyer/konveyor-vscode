@@ -17,9 +17,15 @@ import { configureModelProviderSettings } from "../../hooks/actions";
 
 export const SetupStep: React.FC = () => {
   const { state, dispatch } = useExtensionStateContext();
-  const { analysisConfig, wizardState } = state;
+  const { configErrors, wizardState } = state;
 
-  const isProviderConfigured = analysisConfig.providerConfigured && !analysisConfig.providerKeyMissing;
+  const providerKeyMissing = configErrors.some(
+    (error) => error.type === "provider-key-missing",
+  );
+  const providerNotConfigured = configErrors.some(
+    (error) => error.type === "provider-not-configured",
+  );
+  const isProviderConfigured = !providerKeyMissing && !providerNotConfigured;
   const isSetupComplete = wizardState.stepData.setup.providerConfigured;
 
   const handleConfigureProvider = () => {
@@ -77,7 +83,7 @@ export const SetupStep: React.FC = () => {
                   isInline
                   style={{ marginBottom: "16px" }}
                 >
-                  {analysisConfig.providerKeyMissing
+                  {providerKeyMissing
                     ? "AI provider API key is missing or invalid."
                     : "AI provider is not configured yet."
                   }

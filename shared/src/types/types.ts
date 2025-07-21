@@ -186,6 +186,7 @@ export interface ExtensionData {
   solutionScope?: Scope;
   chatMessages: ChatMessage[];
   solutionEffort: SolutionEffortLevel;
+  solutionServerEnabled: boolean;
   configErrors: ConfigError[];
   profiles: AnalysisProfile[];
   activeProfileId: string | null;
