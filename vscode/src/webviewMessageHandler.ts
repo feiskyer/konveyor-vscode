@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { spawn } from "child_process";
 import { ExtensionState } from "./extensionState";
 import {
   ADD_PROFILE,
@@ -33,6 +34,9 @@ import {
   WebviewAction,
   WebviewActionType,
   ScopeWithAksMigrateContext,
+  OPEN_URL,
+  FIND_AND_OPEN_FILE,
+  BUILD_QUARKUS_KUBERNETES,
   ExtensionData,
   createConfigError,
 } from "@aks-migrate/shared";
@@ -43,6 +47,180 @@ import {
   saveUserProfiles,
   setActiveProfileId,
 } from "./utilities/profiles/profileService";
+
+// Types for better type safety
+interface BuildResult {
+  success: boolean;
+  code: number;
+}
+
+type ManifestFile = [string, vscode.FileType];
+
+// Constants
+const PROGRESS_UPDATE_INTERVAL = 2000; // 2 seconds
+
+// Helper functions for BUILD_QUARKUS_KUBERNETES
+
+/**
+ * Gets the appropriate Maven command based on the platform
+ */
+function getMavenCommand(): string {
+  const isWindows = process.platform === "win32";
+  return isWindows ? "mvn.cmd" : "mvn";
+}
+
+/**
+ * Updates the containerization state in the wizard
+ */
+function updateContainerizationState(
+  state: ExtensionState,
+  dockerfileGenerated: boolean,
+  k8sConfigsGenerated: boolean,
+  deploymentReady: boolean,
+) {
+  state.mutateData((draft) => {
+    draft.wizardState.stepData.containerization.dockerfileGenerated = dockerfileGenerated;
+    draft.wizardState.stepData.containerization.k8sConfigsGenerated = k8sConfigsGenerated;
+    draft.wizardState.stepData.containerization.deploymentReady = deploymentReady;
+  });
+}
+
+/**
+ * Creates a terminal for build output
+ */
+function createBuildTerminal(workspaceRoot: string): vscode.Terminal {
+  const terminal = vscode.window.createTerminal({
+    name: "Quarkus Build",
+    cwd: workspaceRoot,
+  });
+  terminal.show();
+  return terminal;
+}
+
+/**
+ * Handles the Maven build process execution
+ */
+async function executeMavenBuild(
+  workspaceRoot: string,
+  onProgress?: (message: string) => void,
+): Promise<BuildResult> {
+  const mvnCommand = getMavenCommand();
+
+  console.log(`Starting Maven build with command: ${mvnCommand} in directory: ${workspaceRoot}`);
+
+  const buildProcess = spawn(mvnCommand, ["clean", "compile", "package", "-DskipTests"], {
+    cwd: workspaceRoot,
+    stdio: ["pipe", "pipe", "pipe"],
+    shell: true,
+  });
+
+  // Handle spawn events
+  buildProcess.on("spawn", () => {
+    console.log("Maven process spawned successfully");
+  });
+
+  // Collect output
+  let buildOutput = "";
+  let buildError = "";
+
+  buildProcess.stdout?.on("data", (data: Buffer) => {
+    buildOutput += data.toString();
+  });
+
+  buildProcess.stderr?.on("data", (data: Buffer) => {
+    buildError += data.toString();
+  });
+
+  // Create progress update interval
+  const progressInterval = setInterval(() => {
+    if (buildProcess.killed) {
+      clearInterval(progressInterval);
+      return;
+    }
+    onProgress?.("Maven build in progress...");
+  }, PROGRESS_UPDATE_INTERVAL);
+
+  // Wait for process completion
+  return new Promise<BuildResult>((resolve) => {
+    let resolved = false;
+
+    const handleProcessEnd = (code: number | null, signal: string | null) => {
+      if (!resolved) {
+        resolved = true;
+        clearInterval(progressInterval);
+        console.log(`Maven build process ended with code: ${code}, signal: ${signal}`);
+        const exitCode = code ?? 0;
+        const success = exitCode === 0;
+
+        if (buildOutput) {
+          console.log(`Build output (stdout): ${buildOutput.substring(0, 500)}...`);
+        }
+        if (buildError) {
+          console.log(`Build error output (stderr): ${buildError.substring(0, 500)}...`);
+        }
+
+        resolve({ success, code: exitCode });
+      }
+    };
+
+    buildProcess.on("close", handleProcessEnd);
+    buildProcess.on("exit", handleProcessEnd);
+
+    buildProcess.on("error", (error: Error) => {
+      if (!resolved) {
+        resolved = true;
+        clearInterval(progressInterval);
+        console.error("Build process error:", error);
+
+        if (error.message.includes("ENOENT") || error.message.includes("not found")) {
+          vscode.window.showErrorMessage(
+            `Maven command not found. Please ensure Maven is installed and available in your PATH. Error: ${error.message}`,
+          );
+        }
+
+        resolve({ success: false, code: -1 });
+      }
+    });
+  });
+}
+
+/**
+ * Checks for generated Kubernetes manifests
+ */
+async function checkGeneratedManifests(workspaceUri: vscode.Uri): Promise<ManifestFile[]> {
+  const kubernetesDir = vscode.Uri.joinPath(workspaceUri, "target", "kubernetes");
+
+  try {
+    const manifests = await vscode.workspace.fs.readDirectory(kubernetesDir);
+    return manifests.filter(
+      ([name, type]) =>
+        type === vscode.FileType.File && (name.endsWith(".yml") || name.endsWith(".yaml")),
+    );
+  } catch (error) {
+    console.error("Failed to read kubernetes directory:", error);
+    return [];
+  }
+}
+
+/**
+ * Handles user interaction for viewing generated manifests
+ */
+async function handleManifestViewingOptions(yamlFiles: ManifestFile[], kubernetesDir: vscode.Uri) {
+  const manifestNames = yamlFiles.map(([name]) => name).join(", ");
+  const result = await vscode.window.showInformationMessage(
+    `Kubernetes manifests generated successfully: ${manifestNames}`,
+    "Open target/kubernetes folder",
+    "View manifests",
+  );
+
+  if (result === "Open target/kubernetes folder") {
+    await vscode.commands.executeCommand("revealFileInOS", kubernetesDir);
+  } else if (result === "View manifests" && yamlFiles.length > 0) {
+    const firstManifest = vscode.Uri.joinPath(kubernetesDir, yamlFiles[0][0]);
+    const doc = await vscode.workspace.openTextDocument(firstManifest);
+    await vscode.window.showTextDocument(doc);
+  }
+}
 
 export function setupWebviewMessageListener(webview: vscode.Webview, state: ExtensionState) {
   webview.onDidReceiveMessage(async (message) => {
@@ -241,14 +419,18 @@ const actions: {
         WizardStep.Profile,
         WizardStep.Analysis,
         WizardStep.Resolution,
+        WizardStep.Containerization,
+        WizardStep.Deploy,
       ].indexOf(draft.wizardState.currentStep);
 
-      if (currentStepIndex < 3) {
+      if (currentStepIndex < 5) {
         const nextStep = [
           WizardStep.Setup,
           WizardStep.Profile,
           WizardStep.Analysis,
           WizardStep.Resolution,
+          WizardStep.Containerization,
+          WizardStep.Deploy,
         ][currentStepIndex + 1];
 
         draft.wizardState.currentStep = nextStep;
@@ -270,6 +452,8 @@ const actions: {
         WizardStep.Profile,
         WizardStep.Analysis,
         WizardStep.Resolution,
+        WizardStep.Containerization,
+        WizardStep.Deploy,
       ].indexOf(draft.wizardState.currentStep);
 
       if (currentStepIndex > 0) {
@@ -278,6 +462,8 @@ const actions: {
           WizardStep.Profile,
           WizardStep.Analysis,
           WizardStep.Resolution,
+          WizardStep.Containerization,
+          WizardStep.Deploy,
         ][currentStepIndex - 1];
 
         draft.wizardState.currentStep = previousStep;
@@ -300,6 +486,144 @@ const actions: {
     });
     // Close the wizard webview
     vscode.commands.executeCommand("aksmigrate.closeWizard");
+  },
+
+  [OPEN_URL]: async (url: string) => {
+    try {
+      await vscode.env.openExternal(vscode.Uri.parse(url));
+    } catch (error) {
+      console.error("Failed to open URL:", error);
+      vscode.window.showErrorMessage(`Failed to open URL: ${url}`);
+    }
+  },
+
+  [FIND_AND_OPEN_FILE]: async (fileName: string) => {
+    try {
+      // Search for the file in the workspace, excluding build directories
+      const files = await vscode.workspace.findFiles(
+        `**/${fileName}`,
+        "{**/node_modules/**,**/target/**,**/build/**,**/dist/**,**/out/**}",
+        10,
+      );
+
+      if (files.length === 0) {
+        vscode.window.showWarningMessage(`File "${fileName}" not found in workspace.`);
+        return;
+      }
+
+      // If multiple files found, let user choose
+      let fileToOpen: vscode.Uri;
+      if (files.length === 1) {
+        fileToOpen = files[0];
+      } else {
+        // Show quick pick for multiple files
+        const items = files.map((file) => ({
+          label: vscode.workspace.asRelativePath(file),
+          uri: file,
+        }));
+
+        const selected = await vscode.window.showQuickPick(items, {
+          placeHolder: `Multiple "${fileName}" files found. Select one to open:`,
+        });
+
+        if (!selected) {
+          return; // User cancelled
+        }
+        fileToOpen = selected.uri;
+      }
+
+      // Open the file
+      const doc = await vscode.workspace.openTextDocument(fileToOpen);
+      await vscode.window.showTextDocument(doc, { preview: false });
+    } catch (error) {
+      console.error("Failed to find and open file:", error);
+      vscode.window.showErrorMessage(`Failed to open file "${fileName}": ${error}`);
+    }
+  },
+
+  [BUILD_QUARKUS_KUBERNETES]: async (_, state) => {
+    try {
+      // Check if we're in a workspace
+      if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
+        vscode.window.showErrorMessage("No workspace folder found.");
+        return;
+      }
+
+      const workspaceRoot = vscode.workspace.workspaceFolders[0].uri.fsPath;
+      const workspaceUri = vscode.workspace.workspaceFolders[0].uri;
+
+      // Update state to show build is in progress
+      updateContainerizationState(state, false, false, false);
+
+      // Show progress
+      await vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: "Building Quarkus Kubernetes manifests",
+          cancellable: false,
+        },
+        async (progress) => {
+          progress.report({ increment: 0, message: "Starting Maven build..." });
+
+          try {
+            // Create terminal to show output to user
+            const terminal = createBuildTerminal(workspaceRoot);
+            terminal.sendText("mvn clean compile package -DskipTests");
+
+            progress.report({ increment: 20, message: "Running mvn clean compile package..." });
+
+            // Execute the Maven build
+            const buildResult = await executeMavenBuild(workspaceRoot, (message) => {
+              progress.report({ increment: 2, message });
+            });
+
+            progress.report({
+              increment: 80,
+              message: "Build completed, checking for generated manifests...",
+            });
+
+            if (buildResult.success) {
+              // Check for generated Kubernetes manifests
+              const yamlFiles = await checkGeneratedManifests(workspaceUri);
+
+              if (yamlFiles.length > 0) {
+                progress.report({ increment: 100, message: "Build completed successfully!" });
+
+                // Update state to indicate success
+                updateContainerizationState(state, true, true, true);
+
+                // Handle manifest viewing options
+                const kubernetesDir = vscode.Uri.joinPath(workspaceUri, "target", "kubernetes");
+                await handleManifestViewingOptions(yamlFiles, kubernetesDir);
+              } else {
+                progress.report({
+                  increment: 100,
+                  message: "Build completed but no manifests found",
+                });
+                vscode.window.showWarningMessage(
+                  "Build completed successfully but no Kubernetes manifests were found in target/kubernetes. " +
+                    "Make sure your application.properties includes the necessary Quarkus Kubernetes extension configuration.",
+                );
+              }
+            } else {
+              progress.report({
+                increment: 100,
+                message: `Build failed with code ${buildResult.code}`,
+              });
+              vscode.window.showErrorMessage(
+                `Maven build failed with exit code ${buildResult.code}. Check the terminal output for details.`,
+              );
+            }
+          } catch (buildError) {
+            progress.report({ increment: 100, message: "Build process failed" });
+            vscode.window.showErrorMessage(`Build process failed: ${buildError}`);
+          }
+        },
+      );
+    } catch (error) {
+      console.error("Failed to build Quarkus Kubernetes manifests:", error);
+      vscode.window.showErrorMessage(`Failed to build: ${error}`);
+    }
   },
 };
 

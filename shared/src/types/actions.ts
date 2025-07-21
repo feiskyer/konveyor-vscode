@@ -26,6 +26,12 @@ export const WIZARD_NEXT_STEP = "WIZARD_NEXT_STEP";
 export const WIZARD_PREVIOUS_STEP = "WIZARD_PREVIOUS_STEP";
 export const WIZARD_SET_STEP = "WIZARD_SET_STEP";
 export const WIZARD_FINISH = "WIZARD_FINISH";
+export const UPDATE_WIZARD_STATE = "UPDATE_WIZARD_STATE";
+export const CONFIGURE_QUARKUS_KUBERNETES = "CONFIGURE_QUARKUS_KUBERNETES";
+export const DEPLOY_APPLICATION = "DEPLOY_APPLICATION";
+export const OPEN_URL = "OPEN_URL";
+export const FIND_AND_OPEN_FILE = "FIND_AND_OPEN_FILE";
+export const BUILD_QUARKUS_KUBERNETES = "BUILD_QUARKUS_KUBERNETES";
 
 export type WebviewActionType =
   | typeof SET_STATE
@@ -56,7 +62,13 @@ export type WebviewActionType =
   | typeof WIZARD_NEXT_STEP
   | typeof WIZARD_PREVIOUS_STEP
   | typeof WIZARD_SET_STEP
-  | typeof WIZARD_FINISH;
+  | typeof WIZARD_FINISH
+  | typeof UPDATE_WIZARD_STATE
+  | typeof CONFIGURE_QUARKUS_KUBERNETES
+  | typeof DEPLOY_APPLICATION
+  | typeof OPEN_URL
+  | typeof FIND_AND_OPEN_FILE
+  | typeof BUILD_QUARKUS_KUBERNETES;
 export interface WebviewAction<S, T> {
   type: S;
   payload: T;

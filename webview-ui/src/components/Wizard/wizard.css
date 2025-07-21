@@ -36,7 +36,7 @@
   justify-content: center;
   gap: 0;
   margin: 0 auto;
-  max-width: 600px;
+  max-width: 800px; /* Increased from 600px to accommodate 6 steps */
 }
 
 .wizard-step-indicator-item {
@@ -45,7 +45,7 @@
   align-items: center;
   position: relative;
   flex: 1;
-  min-width: 120px;
+  min-width: 100px; /* Reduced from 120px to accommodate 6 steps */
 }
 
 .wizard-step-circle {
@@ -258,7 +258,7 @@
   }
 
   .wizard-step-indicator-item {
-    min-width: 80px;
+    min-width: 70px; /* Further reduced for mobile to handle 6 steps */
   }
 
   .wizard-step-circle {
