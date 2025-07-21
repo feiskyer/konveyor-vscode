@@ -1,6 +1,6 @@
 import "./styles.css";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Alert,
   AlertGroup,
@@ -39,7 +39,7 @@ import {
   ToolbarItem,
 } from "@patternfly/react-core";
 
-import { openFile, startServer, runAnalysis, stopServer } from "../../hooks/actions";
+import { openFile, startServer, runAnalysis, stopServer, getSuccessRate } from "../../hooks/actions";
 import { useViolations } from "../../hooks/useViolations";
 import { useExtensionStateContext } from "../../context/ExtensionStateContext";
 import { WalkthroughDrawer } from "./WalkthroughDrawer/WalkthroughDrawer";
@@ -49,7 +49,8 @@ import { ViolationsCount } from "../ViolationsCount/ViolationsCount";
 import ViolationIncidentsList from "../ViolationIncidentsList";
 import { ProfileSelector } from "../ProfileSelector/ProfileSelector";
 import ProgressIndicator from "../ProgressIndicator";
-import { Incident, AnalysisConfig } from "@aks-migrate/shared";
+import { Incident } from "@aks-migrate/shared";
+import { PageHeader } from "@patternfly/react-component-groups";
 
 const AnalysisPage: React.FC = () => {
   const { state, dispatch } = useExtensionStateContext();
@@ -61,10 +62,12 @@ const AnalysisPage: React.FC = () => {
     isFetchingSolution: isWaitingForSolution,
     ruleSets: analysisResults,
     enhancedIncidents,
-    analysisConfig,
+    configErrors,
     profiles,
     activeProfileId,
     serverState,
+    solutionServerEnabled,
+    localChanges,
   } = state;
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -79,6 +82,11 @@ const AnalysisPage: React.FC = () => {
 
   const drawerRef = React.useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (enhancedIncidents.length > 0 && solutionServerEnabled) {
+      dispatch(getSuccessRate());
+    }
+  }, [enhancedIncidents.length, localChanges.length, solutionServerEnabled, dispatch]);
   const handleIncidentSelect = (incident: Incident) => {
     setFocusedIncident(incident);
     dispatch(openFile(incident.uri, incident.lineNumber ?? 0));
@@ -86,18 +94,6 @@ const AnalysisPage: React.FC = () => {
 
   const handleRunAnalysis = () => dispatch(runAnalysis());
   const handleServerToggle = () => dispatch(serverRunning ? stopServer() : startServer());
-
-  const getConfigWarning = (
-    config: AnalysisConfig,
-  ): { message: string; variant: "warning" | "danger" } | null => {
-    if (!config.labelSelectorValid) {
-      return { message: "Label selector is not configured.", variant: "warning" };
-    }
-    if (config.providerKeyMissing && !config.providerConfigured) {
-      return { message: "Provider credentials are missing or invalid.", variant: "danger" };
-    }
-    return null;
-  };
 
   const panelContent = (
     <WalkthroughDrawer
@@ -108,9 +104,6 @@ const AnalysisPage: React.FC = () => {
   );
 
   const selectedProfile = profiles.find((p) => p.id === activeProfileId);
-
-  const configWarning = selectedProfile ? getConfigWarning(analysisConfig) : null;
-  const hasConfigWarning = configWarning !== null;
 
   const configInvalid =
     !selectedProfile?.labelSelector?.trim() ||
@@ -146,8 +139,8 @@ const AnalysisPage: React.FC = () => {
                         <ToolbarItem>
                           <ConfigButton
                             onClick={() => setIsConfigOpen(true)}
-                            hasWarning={hasConfigWarning}
-                            warningMessage={configWarning?.message}
+                            hasWarning={configErrors.length > 0}
+                            warningMessage="Please review your configuration before running analysis."
                           />
                         </ToolbarItem>
                       </ToolbarGroup>
@@ -198,13 +191,19 @@ const AnalysisPage: React.FC = () => {
                 </Card>
               </PageSection>
             )}
-            {hasConfigWarning && (
+            {configErrors.length > 0 && (
               <PageSection padding={{ default: "noPadding" }}>
-                <Card isCompact style={{ maxWidth: "600px", margin: "0 auto" }}>
-                  <Alert variant={configWarning!.variant} title={configWarning!.message}>
-                    <p>Please review your configuration before running analysis.</p>
-                  </Alert>
-                </Card>
+                {configErrors.map((error, index) => (
+                  <Card
+                    isCompact
+                    style={{ maxWidth: "600px", marginTop: "1rem", margin: "0 auto" }}
+                    key={index}
+                  >
+                    <Alert variant="warning" title={error.message}>
+                      {error.error?.message && error.error.message}
+                    </Alert>
+                  </Card>
+                ))}
               </PageSection>
             )}
             {selectedProfile && (
@@ -286,13 +285,15 @@ const AnalysisPage: React.FC = () => {
                       <Flex className="header-layout">
                         <FlexItem>
                           <CardTitle>Analysis Results</CardTitle>
-                          <ViolationsCount
-                            violationsCount={violations.length}
-                            incidentsCount={violations.reduce(
-                              (prev, curr) => prev + curr.incidents.length,
-                              0,
-                            )}
-                          />
+                          {!isAnalyzing && (
+                            <ViolationsCount
+                              violationsCount={violations.length}
+                              incidentsCount={violations.reduce(
+                                (prev, curr) => prev + curr.incidents.length,
+                                0,
+                              )}
+                            />
+                          )}
                         </FlexItem>
                       </Flex>
                     </CardHeader>

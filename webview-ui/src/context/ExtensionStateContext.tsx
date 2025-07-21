@@ -20,12 +20,8 @@ const defaultState: ExtensionData = {
   chatMessages: [],
   solutionState: "none",
   solutionEffort: "Low",
-  analysisConfig: {
-    labelSelectorValid: false,
-    providerConfigured: false,
-    providerKeyMissing: false,
-    customRulesConfigured: false,
-  },
+  solutionServerEnabled: false,
+  configErrors: [],
   profiles: [],
   activeProfileId: "",
   wizardState: {

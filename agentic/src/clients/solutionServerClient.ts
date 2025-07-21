@@ -18,6 +18,12 @@ export interface GetBestHintResult {
   hint_id: number;
 }
 
+export interface CreateMultipleIncidentsResult {
+  incident_ids: number[];
+  created_count: number;
+  failed_count: number;
+}
+
 export class SolutionServerClientError extends Error {
   constructor(message: string) {
     super(message);
@@ -147,7 +153,10 @@ export class SolutionServerClient {
     }
 
     if (!this.mcpClient || !this.isConnected) {
-      throw new SolutionServerClientError("Solution server is not connected");
+      console.error(
+        "Get success rate called but solution server is not connected. Maybe the server is not running?",
+      );
+      return incidents;
     }
 
     try {
@@ -244,7 +253,15 @@ export class SolutionServerClient {
     }
 
     if (!this.mcpClient || !this.isConnected) {
-      throw new Error("Solution server is not connected");
+      console.error(
+        "Create incident called but solution server is not connected. Maybe the server is not running?",
+      );
+      return -1;
+    }
+
+    if (!this.currentClientId) {
+      console.error("Create incident called but client ID is not set");
+      return -1;
     }
 
     try {
@@ -290,6 +307,94 @@ export class SolutionServerClient {
     }
   }
 
+  public async createMultipleIncidents(
+    enhancedIncidents: EnhancedIncident[],
+  ): Promise<CreateMultipleIncidentsResult> {
+    if (!this.enabled) {
+      console.log("Solution server is disabled, returning dummy incident IDs");
+      return {
+        incident_ids: enhancedIncidents.map(() => -1),
+        created_count: enhancedIncidents.length,
+        failed_count: 0,
+      };
+    }
+
+    if (!this.mcpClient || !this.isConnected) {
+      console.error(
+        "Create multiple incidents called but solution server is not connected. Maybe the server is not running?",
+      );
+      return {
+        incident_ids: enhancedIncidents.map(() => -1),
+        created_count: 0,
+        failed_count: enhancedIncidents.length,
+      };
+    }
+
+    if (!this.currentClientId) {
+      console.error("Create multiple incidents called but client ID is not set");
+      return {
+        incident_ids: enhancedIncidents.map(() => -1),
+        created_count: 0,
+        failed_count: enhancedIncidents.length,
+      };
+    }
+
+    try {
+      console.log(`Creating ${enhancedIncidents.length} incidents in bulk`);
+
+      const result = await this.mcpClient!.callTool({
+        name: "create_multiple_incidents",
+        arguments: {
+          client_id: this.currentClientId,
+          extended_incidents: enhancedIncidents,
+        },
+      });
+
+      let bulkResult: CreateMultipleIncidentsResult | undefined;
+
+      if (result.content && Array.isArray(result.content) && result.content.length > 0) {
+        for (const chunk of result.content) {
+          if ("text" in chunk) {
+            const content = chunk.text as string;
+            try {
+              const parsed = JSON.parse(content);
+              if (
+                parsed &&
+                typeof parsed === "object" &&
+                "incident_ids" in parsed &&
+                Array.isArray(parsed.incident_ids)
+              ) {
+                bulkResult = parsed as CreateMultipleIncidentsResult;
+              }
+            } catch {
+              console.error(`Failed to parse bulk incident creation response: ${content}`);
+              throw new Error(`Invalid bulk incident creation response: ${content}`);
+            }
+            break;
+          }
+        }
+      }
+
+      if (!bulkResult) {
+        console.log("No bulk incident creation result returned from server");
+        return {
+          incident_ids: enhancedIncidents.map(() => -1),
+          created_count: 0,
+          failed_count: enhancedIncidents.length,
+        };
+      }
+
+      console.log(
+        `Successfully created ${bulkResult.created_count} incidents, ${bulkResult.failed_count} failed`,
+      );
+
+      return bulkResult;
+    } catch (error) {
+      console.error(`Error creating multiple incidents: ${error}`);
+      throw error;
+    }
+  }
+
   public async createSolution(
     incidentIds: number[],
     changeSet: SolutionChangeSet,
@@ -302,7 +407,15 @@ export class SolutionServerClient {
     }
 
     if (!this.mcpClient || !this.isConnected) {
-      throw new Error("Solution server is not connected");
+      console.error(
+        "Create solution called but solution server is not connected. Maybe the server is not running?",
+      );
+      return -1;
+    }
+
+    if (!this.currentClientId) {
+      console.error("Create solution called but client ID is not set");
+      return -1;
     }
 
     console.log(`Creating solution for incident IDs: ${incidentIds.join(", ")}`);
@@ -360,7 +473,10 @@ export class SolutionServerClient {
     }
 
     if (!this.mcpClient || !this.isConnected) {
-      throw new Error("Solution server is not connected");
+      console.error(
+        "Get best hint called but solution server is not connected. Maybe the server is not running?",
+      );
+      return undefined;
     }
 
     try {
@@ -411,6 +527,71 @@ export class SolutionServerClient {
       console.error(
         `Error getting best hint for violation ${rulesetName} - ${violationName}: ${error}`,
       );
+      throw error;
+    }
+  }
+
+  public async acceptFile(clientId: string, uri: string, content: string): Promise<void> {
+    if (!this.enabled) {
+      console.log("Solution server is disabled, skipping accept_file");
+      return;
+    }
+
+    if (!this.mcpClient || !this.isConnected) {
+      console.error(
+        "Accept file called but solution server is not connected. Maybe the server is not running?",
+      );
+      return;
+    }
+
+    try {
+      console.log(`Accepting file: ${uri}`);
+
+      await this.mcpClient!.callTool({
+        name: "accept_file",
+        arguments: {
+          client_id: clientId,
+          solution_file: {
+            uri: uri,
+            content: content,
+          },
+        },
+      });
+
+      console.log(`File accepted successfully: ${uri}`);
+    } catch (error) {
+      console.error(`Error accepting file ${uri}: ${error}`);
+      throw error;
+    }
+  }
+
+  public async rejectFile(clientId: string, uri: string): Promise<void> {
+    if (!this.enabled) {
+      console.log("Solution server is disabled, skipping reject_file");
+      return;
+    }
+
+    if (!this.mcpClient || !this.isConnected) {
+      console.error(
+        "Reject file called but solution server is not connected. Maybe the server is not running?",
+      );
+      return;
+    }
+
+    try {
+      console.log(`Rejecting file: ${uri}`);
+
+      await this.mcpClient!.callTool({
+        name: "reject_file",
+        arguments: {
+          client_id: clientId,
+          file_uri: uri,
+        },
+      });
+
+      console.log(`File rejected successfully: ${uri}`);
+    } catch (error) {
+      console.error(`Error rejecting file ${uri}: ${error}`);
       throw error;
     }
   }

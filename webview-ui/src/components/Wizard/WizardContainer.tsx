@@ -27,7 +27,14 @@ import "./wizard.css";
 
 export const WizardContainer: React.FC = () => {
   const { state, dispatch } = useExtensionStateContext();
-  const { wizardState, analysisConfig, activeProfileId, enhancedIncidents } = state;
+  const { wizardState, configErrors, activeProfileId, enhancedIncidents } = state;
+
+  const providerKeyMissing = configErrors.some(
+    (error) => error.type === "provider-key-missing",
+  );
+  const providerNotConfigured = configErrors.some(
+    (error) => error.type === "provider-not-configured",
+  );
 
   const handleNext = () => {
     dispatch({ type: "WIZARD_NEXT_STEP", payload: {} });
@@ -41,7 +48,7 @@ export const WizardContainer: React.FC = () => {
   const canNavigateForward = () => {
     switch (wizardState.currentStep) {
       case KonveyorWizardStep.Setup:
-        return analysisConfig.providerConfigured && !analysisConfig.providerKeyMissing;
+        return !providerKeyMissing && !providerNotConfigured;
       case KonveyorWizardStep.Profile:
         return activeProfileId !== "";
       case KonveyorWizardStep.Analysis:
