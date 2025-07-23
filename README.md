@@ -46,7 +46,14 @@ Ensure that you have the following installed:
    npm run collect-assets
    ```
 
-   Note: For development, we recommend using `collect-assets:dev` as it ensures your runtime assets match the latest code from the main branch. The regular `collect-assets` command uses a specific release version which may be outdated for development purposes.
+   Note:
+
+   - For development, we recommend using `collect-assets:dev` as it ensures your runtime assets match the latest code from the main branch. The regular `collect-assets` command uses a specific release version which may be outdated for development purposes.
+   - if you hit `system cannot find the path specified` error when running the above command on Windows, you could set `GITHUB_TOKEN` first, and then run the node command next to workaround the issue:
+     ```console
+     set GITHUB_TOKEN=
+     node ./scripts/collect-assets.js --use-workflow-artifacts --branch=main
+     ```
 
 ### Running the Extension in Development Mode
 
